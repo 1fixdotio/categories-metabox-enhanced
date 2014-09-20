@@ -126,6 +126,7 @@ class Category_Metabox_Enhanced {
 		 * Register settings
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-category-metabox-enhanced-settings.php';
+		new Category_Metabox_Enhanced_Settings_Settings( 'category-metabox-enhanced' );
 
 		$this->loader = new Category_Metabox_Enhanced_Loader();
 

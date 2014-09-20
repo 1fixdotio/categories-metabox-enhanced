@@ -33,6 +33,8 @@ class Category_Metabox_Enhanced_Settings_Settings {
 	 * Registering the Sections, Fields, and Settings.
 	 *
 	 * This function is registered with the 'admin_init' hook.
+	 *
+	 * @since 0.4.0
 	 */
 	public function admin_init() {
 
@@ -77,6 +79,13 @@ class Category_Metabox_Enhanced_Settings_Settings {
 
 	} // end admin_init
 
+        /**
+         * Callback function for type field
+         *
+         * @since 0.4.0
+         * @param  array $args
+         * @return string HTML for type field
+         */
 	public function type_callback( $args ) {
 
                 $types = array(
@@ -101,7 +110,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
 	 *
 	 * @return array Sanitized data
 	 *
-	 * @since 0.7.0
+	 * @since 0.4.0
 	 */
 	public function validate_inputs( $inputs ) {
 
@@ -115,5 +124,3 @@ class Category_Metabox_Enhanced_Settings_Settings {
 
 	} // end validate_inputs
 }
-
-new Category_Metabox_Enhanced_Settings_Settings( 'category-metabox-enhanced' );

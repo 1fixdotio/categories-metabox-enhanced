@@ -197,8 +197,17 @@ class Category_Metabox_Enhanced_Admin {
 	 */
 	public function customize_taxonomy_metaboxes() {
 
-		$category_metabox = new Taxonomy_Single_Term( 'category' );
-		$category_metabox->set( 'priority', 'default' );
+		$taxes = of_cme_supported_taxonomies();
+
+		foreach ( $taxes as $tax ) {
+			$options = get_option( $this->name . '_' . $tax );
+			$type = $options['type'];
+
+			if ( $type != 'checkbox' ) {
+				${$tax . "_metabox"} = new Taxonomy_Single_Term( $tax, array(), $type );
+				${$tax . "_metabox"}->set( 'priority', 'default' );
+			}
+		}
 	}
 
 }
