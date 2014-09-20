@@ -9,16 +9,16 @@ Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Replace the checkboxes with radio buttons or a select drop-down in the built-in Category metabox.
+Replace the checkboxes with radio buttons or a select drop-down in the built-in Categories metabox.
 
 == Description ==
 
-Thanks to [Taxonomy_Single_Term](https://github.com/WebDevStudios/Taxonomy_Single_Term), a library created by [WebDevStudios](http://webdevstudios.com/) to make my work much easier on creating this plugin.
+Thanks to [Taxonomy_Single_Term](https://github.com/WebDevStudios/Taxonomy_Single_Term), a library created by [WebDevStudios](http://webdevstudios.com/), it made my work much easier on creating this plugin.
 
-With Category Metabox Enhanced, you could:
+With Category Metabox Enhanced, you can:
 
-* Change the built-in Category metabox to a single term UI, which means replacing the checkboxes with radio buttons or a select drop-down.
-* Apply the single term UI to the selected hierarchical custom taxonomy in the plugin's Settings page.
+* Change the built-in Categories metabox to a single term UI, which means replacing the checkboxes with radio buttons or a select drop-down.
+* Apply the single term UI to the hierarchical custom taxonomies in the plugin's Settings page.
 * TODO - Customized the single term UI by setting these options:
 ** Priority and position of the metabox placement
 ** Title of the metabox
@@ -33,8 +33,8 @@ With Category Metabox Enhanced, you could:
 
 == Screenshots ==
 
-1. The checkboxes in Category metabox are replaced with radio buttons
-2. The checkboxes in Category metabox are replaced with a select drop-down
+1. The checkboxes in Categories metabox are replaced with radio buttons
+2. The checkboxes in Categories metabox are replaced with a select drop-down
 3. A settings page for this plugin
 
 == Changelog ==
