@@ -29,3 +29,14 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
+
+
+$taxes = of_cme_supported_taxonomies();
+foreach ( $taxes as $tax ) {
+	delete_option( 'category-metabox-enhanced_' . $tax );
+}
+
+delete_option( 'cme-display-activation-message' );
+/**
+ * @todo Delete options in whole network
+ */
