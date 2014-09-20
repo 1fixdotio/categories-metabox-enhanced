@@ -123,4 +123,10 @@ class Category_Metabox_Enhanced_Admin {
 		}
 	}
 
+	public function customize_taxonomy_metaboxes() {
+
+		$category_metabox = new Taxonomy_Single_Term( 'category' );
+		$category_metabox->set( 'priority', 'default' );
+	}
+
 }

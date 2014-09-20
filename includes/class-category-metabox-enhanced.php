@@ -153,6 +153,9 @@ class Category_Metabox_Enhanced {
 		// Display the admin notification
 		$this->loader->add_action( 'admin_notices', $plugin_admin, 'admin_notice_activation' );
 
+		//Update the taxonomy metaboxes
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'customize_taxonomy_metaboxes' );
+
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
