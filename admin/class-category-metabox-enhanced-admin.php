@@ -190,6 +190,11 @@ class Category_Metabox_Enhanced_Admin {
 		return wp_nonce_url( add_query_arg( array( 'action' => 'completely_delete', 'post' => $post_id ), admin_url( 'admin.php' ) ) );
 	}
 
+	/**
+	 * Customize taxonomy metaboxes
+	 *
+	 * @since 0.3.0
+	 */
 	public function customize_taxonomy_metaboxes() {
 
 		$category_metabox = new Taxonomy_Single_Term( 'category' );

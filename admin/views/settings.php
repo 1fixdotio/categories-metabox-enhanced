@@ -20,15 +20,30 @@
 	<h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 	<?php // settings_errors(); ?>
 
+	<?php
+		$taxes = of_cme_supported_taxonomies();
+
+		if ( isset( $_GET['tab'] ) ) {
+			$active_tab = $_GET['tab'];
+		} else {
+			$active_tab = ( isset( $taxes[0] ) ) ? $taxes[0] : '';
+		}
+	?>
+
+	<h2 class="nav-tab-wrapper">
+		<?php foreach ( $taxes as $tax ) { ?>
+		<a href="?page=category-metabox-enhanced&tab=<?php echo $tax; ?>" class="nav-tab <?php echo ( $tax == $active_tab ) ? 'nav-tab-active' : ''; ?>"><?php $taxonomy_object = get_taxonomy( $tax ); echo $taxonomy_object->labels->name; ?></a>
+		<?php } ?>
+	</h2>
+
 	<form method="post" action="options.php">
 		<?php
-			// $plugin = Completely_Delete::get_instance();
-                        //
-			// settings_fields( $plugin->get_plugin_slug() );
-			// do_settings_sections( $plugin->get_plugin_slug() );
-                        //
-			// submit_button();
+			$section = 'category-metabox-enhanced_' . $active_tab;
 
+			settings_fields( $section );
+			do_settings_sections( $section );
+
+			submit_button();
 		?>
 	</form>
 

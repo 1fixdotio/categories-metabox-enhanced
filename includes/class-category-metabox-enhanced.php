@@ -117,6 +117,16 @@ class Category_Metabox_Enhanced {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/taxonomy-single-term/class.taxonomy-single-term.php';
 
+		/**
+		 * Helper functions
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/helper-functions.php';
+
+		/**
+		 * Register settings
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-category-metabox-enhanced-settings.php';
+
 		$this->loader = new Category_Metabox_Enhanced_Loader();
 
 	}
@@ -155,7 +165,7 @@ class Category_Metabox_Enhanced {
 
 		// Add the options page and menu item.
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
-		
+
 		// Add an action link pointing to the options page.
 		$plugin_basename = plugin_basename( plugin_dir_path( dirname( __FILE__ ) ) . $this->plugin_name . '.php' );
 		$this->loader->add_filter( 'plugin_action_links_' . $plugin_basename, $plugin_admin, 'add_action_links' );
