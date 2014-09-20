@@ -123,6 +123,73 @@ class Category_Metabox_Enhanced_Admin {
 		}
 	}
 
+	/**
+	 * Register the administration menu for this plugin into the WordPress Dashboard menu.
+	 *
+	 * @since    0.4.0
+	 */
+	public function add_plugin_admin_menu() {
+
+		/*
+		 * Add a settings page for this plugin to the Settings menu.
+		 *
+		 * NOTE:  Alternative menu locations are available via WordPress administration menu functions.
+		 *
+		 *        Administration Menus: http://codex.wordpress.org/Administration_Menus
+		 *
+		 */
+		$this->plugin_screen_hook_suffix = add_options_page(
+			__( 'Category Metabox Enhanced Settings', $this->name ),
+			__( 'Category Metabox Enhanced', $this->name ),
+			'manage_options',
+			$this->name,
+			array( $this, 'display_plugin_admin_page' )
+		);
+
+	}
+
+	/**
+	 * Render the settings page for this plugin.
+	 *
+	 * @since    0.4.0
+	 */
+	public function display_plugin_admin_page() {
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/settings.php';
+	}
+
+	/**
+	 * Add settings action link to the plugins page.
+	 *
+	 * @since    0.4.0
+	 *
+	 * @param array<string> $links Action links
+	 * @return  array<string> Action links
+	 */
+	public function add_action_links( $links ) {
+
+		return array_merge(
+			array(
+				'settings' => '<a href="' . admin_url( 'options-general.php?page=' . $this->name ) . '">' . __( 'Settings' ) . '</a>',
+			),
+			$links
+		);
+
+	}
+
+	/**
+	 * Build completely delete action url.
+	 *
+	 * @since 0.4.0
+	 *
+	 * @param  int    $post_id Post ID
+	 * @return string    Action url
+	 */
+	public function get_action_url( $post_id ) {
+
+		return wp_nonce_url( add_query_arg( array( 'action' => 'completely_delete', 'post' => $post_id ), admin_url( 'admin.php' ) ) );
+	}
+
 	public function customize_taxonomy_metaboxes() {
 
 		$category_metabox = new Taxonomy_Single_Term( 'category' );

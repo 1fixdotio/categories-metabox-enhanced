@@ -69,7 +69,7 @@ class Category_Metabox_Enhanced {
 	public function __construct() {
 
 		$this->plugin_name = 'category-metabox-enhanced';
-		$this->version = '0.3.0';
+		$this->version = '0.4.0';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -152,6 +152,13 @@ class Category_Metabox_Enhanced {
 
 		// Display the admin notification
 		$this->loader->add_action( 'admin_notices', $plugin_admin, 'admin_notice_activation' );
+
+		// Add the options page and menu item.
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
+		
+		// Add an action link pointing to the options page.
+		$plugin_basename = plugin_basename( plugin_dir_path( dirname( __FILE__ ) ) . $this->plugin_name . '.php' );
+		$this->loader->add_filter( 'plugin_action_links_' . $plugin_basename, $plugin_admin, 'add_action_links' );
 
 		//Update the taxonomy metaboxes
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'customize_taxonomy_metaboxes' );
