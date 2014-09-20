@@ -69,7 +69,7 @@ class Category_Metabox_Enhanced {
 	public function __construct() {
 
 		$this->plugin_name = 'category-metabox-enhanced';
-		$this->version = '0.2.0';
+		$this->version = '0.3.0';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -111,6 +111,11 @@ class Category_Metabox_Enhanced {
 		 * The class responsible for defining all actions that occur in the Dashboard.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-category-metabox-enhanced-admin.php';
+
+		/**
+		 * The Taxonomy_Single_Term library
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/taxonomy-single-term/class.taxonomy-single-term.php';
 
 		$this->loader = new Category_Metabox_Enhanced_Loader();
 
