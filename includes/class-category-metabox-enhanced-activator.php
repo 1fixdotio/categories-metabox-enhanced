@@ -39,11 +39,11 @@ class Category_Metabox_Enhanced_Activator {
 			if ( $network_wide  ) {
 
 				// Get all blog ids
-				$blog_ids = self::get_blog_ids();
+				$blogs = wp_get_sites();
 
-				foreach ( (array) $blog_ids as $blog_id ) {
+				foreach ( (array) $blogs as $blog ) {
 
-					switch_to_blog( $blog_id );
+					switch_to_blog( $blog['blog_id'] );
 					self::single_activate();
 				}
 
@@ -54,29 +54,6 @@ class Category_Metabox_Enhanced_Activator {
 		} else {
 			self::single_activate();
 		}
-
-	}
-
-	/**
-	 * Get all blog ids of blogs in the current network that are:
-	 * - not archived
-	 * - not spam
-	 * - not deleted
-	 *
-	 * @since    0.2.0
-	 *
-	 * @return   array<int>|false    The blog ids, false if no matches.
-	 */
-	private static function get_blog_ids() {
-
-		global $wpdb;
-
-		// get an array of blog ids
-		$sql = "SELECT blog_id FROM $wpdb->blogs
-			WHERE archived = '0' AND spam = '0'
-			AND deleted = '0'";
-
-		return $wpdb->get_col( $sql );
 
 	}
 
