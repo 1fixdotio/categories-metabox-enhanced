@@ -13,7 +13,7 @@
  * @package           Category_Metabox_Enhanced
  *
  * @wordpress-plugin
- * Plugin Name:       WordPress Plugin Boilerplate
+ * Plugin Name:       Category Metabox Enhanced
  * Plugin URI:        http://1fix.io/category-metabox-enhanced/
  * Description:       Replace the checkboxes with radio buttons or a select drop-down in the built-in Category metabox.
  * Version:           0.1.0
