@@ -74,7 +74,6 @@ class Category_Metabox_Enhanced {
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
-		$this->define_public_hooks();
 
 	}
 
@@ -113,12 +112,6 @@ class Category_Metabox_Enhanced {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-category-metabox-enhanced-admin.php';
 
-		/**
-		 * The class responsible for defining all actions that occur in the public-facing
-		 * side of the site.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-category-metabox-enhanced-public.php';
-
 		$this->loader = new Category_Metabox_Enhanced_Loader();
 
 	}
@@ -154,25 +147,9 @@ class Category_Metabox_Enhanced {
 
 		// Display the admin notification
 		$this->loader->add_action( 'admin_notices', $plugin_admin, 'admin_notice_activation' );
-		
+
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-
-	}
-
-	/**
-	 * Register all of the hooks related to the public-facing functionality
-	 * of the plugin.
-	 *
-	 * @since    0.1.0
-	 * @access   private
-	 */
-	private function define_public_hooks() {
-
-		$plugin_public = new Category_Metabox_Enhanced_Public( $this->get_plugin_name(), $this->get_version() );
-
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
 	}
 
