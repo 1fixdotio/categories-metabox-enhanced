@@ -8,20 +8,20 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              http://example.com
- * @since             1.0.0
- * @package           Plugin_Name
+ * @link              http://1fix.io
+ * @since             0.1.0
+ * @package           Category_Metabox_Enhanced
  *
  * @wordpress-plugin
  * Plugin Name:       WordPress Plugin Boilerplate
- * Plugin URI:        http://example.com/plugin-name-uri/
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress dashboard.
- * Version:           1.0.0
- * Author:            Your Name or Your Company
- * Author URI:        http://example.com/
+ * Plugin URI:        http://1fix.io/category-metabox-enhanced/
+ * Description:       Replace the checkboxes with radio buttons or a select drop-down in the built-in Category metabox.
+ * Version:           0.1.0
+ * Author:            1Fix.io
+ * Author URI:        http://1fix.io/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       plugin-name
+ * Text Domain:       of-cme
  * Domain Path:       /languages
  */
 
@@ -33,24 +33,24 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * The code that runs during plugin activation.
  */
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-plugin-name-activator.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-category-metabox-enhanced-activator.php';
 
 /**
  * The code that runs during plugin deactivation.
  */
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-plugin-name-deactivator.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-category-metabox-enhanced-deactivator.php';
 
-/** This action is documented in includes/class-plugin-name-activator.php */
-register_activation_hook( __FILE__, array( 'Plugin_Name_Activator', 'activate' ) );
+/** This action is documented in includes/class-category-metabox-enhanced-activator.php */
+register_activation_hook( __FILE__, array( 'Category_Metabox_Enhanced_Activator', 'activate' ) );
 
-/** This action is documented in includes/class-plugin-name-deactivator.php */
-register_deactivation_hook( __FILE__, array( 'Plugin_Name_Deactivator', 'deactivate' ) );
+/** This action is documented in includes/class-category-metabox-enhanced-deactivator.php */
+register_deactivation_hook( __FILE__, array( 'Category_Metabox_Enhanced_Deactivator', 'deactivate' ) );
 
 /**
  * The core plugin class that is used to define internationalization,
  * dashboard-specific hooks, and public-facing site hooks.
  */
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-plugin-name.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-category-metabox-enhanced.php';
 
 /**
  * Begins execution of the plugin.
@@ -59,12 +59,12 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/class-plugin-name.php';
  * then kicking off the plugin from this point in the file does
  * not affect the page life cycle.
  *
- * @since    1.0.0
+ * @since    0.1.0
  */
-function run_plugin_name() {
+function run_category_metabox_enhanced() {
 
-	$plugin = new Plugin_Name();
+	$plugin = new Category_Metabox_Enhanced();
 	$plugin->run();
 
 }
-run_plugin_name();
+run_category_metabox_enhanced();

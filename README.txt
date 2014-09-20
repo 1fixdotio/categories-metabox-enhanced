@@ -9,7 +9,7 @@ Stable tag: 0.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Replace checkboxes with radio buttons or a select drop-down in the built-in Category metabox.
+Replace the checkboxes with radio buttons or a select drop-down in the built-in Category metabox.
 
 == Description ==
 
