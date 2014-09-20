@@ -100,4 +100,27 @@ class Category_Metabox_Enhanced_Admin {
 
 	}
 
+	/**
+	 * Display admin notice after plugin activated
+	 *
+	 * @since 0.2.0
+	 */
+	public function admin_notice_activation() {
+
+		$screen = get_current_screen();
+
+		if ( true == get_option( 'cme-display-activation-message' ) && 'plugins' == $screen->id ) {
+			$html  = '<div class="updated">';
+			$html .= '<p>';
+				$html .= sprintf( __( 'The plugin <strong>Category Metabox Enhanced is activated.</strong> Check out all the options for this plugin in the <strong><a href="%s">Settings</a></strong> page.', $this->name ), admin_url( 'options-general.php?page=' . $this->name ) );
+			$html .= '</p>';
+			$html .= '</div><!-- /.updated -->';
+
+			echo $html;
+
+			delete_option( 'cme-display-activation-message' );
+
+		}
+	}
+
 }

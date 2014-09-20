@@ -69,7 +69,7 @@ class Category_Metabox_Enhanced {
 	public function __construct() {
 
 		$this->plugin_name = 'category-metabox-enhanced';
-		$this->version = '0.1.0';
+		$this->version = '0.2.0';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -152,6 +152,9 @@ class Category_Metabox_Enhanced {
 
 		$plugin_admin = new Category_Metabox_Enhanced_Admin( $this->get_plugin_name(), $this->get_version() );
 
+		// Display the admin notification
+		$this->loader->add_action( 'admin_notices', $plugin_admin, 'admin_notice_activation' );
+		
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
