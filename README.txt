@@ -18,7 +18,13 @@ Thanks to [Taxonomy_Single_Term](https://github.com/WebDevStudios/Taxonomy_Singl
 With Category Metabox Enhanced, you could:
 
 * Change the built-in Category metabox to a single term UI, which means replacing the checkboxes with radio buttons or a select drop-down.
-* Apply the single term UI to any hierarchical custom taxonomy in the plugin's Settings page.
+* Apply the single term UI to the selected hierarchical custom taxonomy in the plugin's Settings page.
+* TODO - Customized the single term UI by setting these options:
+** Priority and position of the metabox placement
+** Title of the metabox
+** If the selection should be required
+** If child-terms in the radio elements should be indenting
+** If adding of new terms from the metabox is enable
 
 == Installation ==
 
