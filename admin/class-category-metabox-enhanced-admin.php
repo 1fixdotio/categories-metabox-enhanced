@@ -200,13 +200,21 @@ class Category_Metabox_Enhanced_Admin {
 		$taxes = of_cme_supported_taxonomies();
 
 		foreach ( $taxes as $tax ) {
+			$defaults = of_cme_get_defaults();
 			$options = get_option( $this->name . '_' . $tax );
+			$options = wp_parse_args( $options, $defaults );
+
 			$type = $options['type'];
 
 			if ( $type != 'checkbox' ) {
 				${$tax . "_metabox"} = new Taxonomy_Single_Term( $tax, array(), $type );
-				$context = $options['context'];
-				${$tax . "_metabox"}->set( 'context', $context );
+
+				unset( $defaults['type'] );
+
+				foreach ( $defaults as $key => $v ) {
+					$value = $options[$key];
+					${$tax . "_metabox"}->set( $key, $value );
+				}
 			}
 		}
 	}

@@ -40,10 +40,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
 
 		$taxes = of_cme_supported_taxonomies();
 
-		$defaults = array(
-				'type' => 'checkbox',
-				'context' => 'side'
-			);
+		$defaults = of_cme_get_defaults();
 
 		foreach ( $taxes as $tax ) {
 			$taxonomy_object = get_taxonomy( $tax );
@@ -75,6 +72,24 @@ class Category_Metabox_Enhanced_Settings_Settings {
 				'context',
 				__( 'Position (Context)', $this->name ),
 				array( $this, 'context_callback' ),
+				$section,
+				$tax,
+				$args
+			);
+
+			add_settings_field(
+				'priority',
+				__( 'Priority', $this->name ),
+				array( $this, 'priority_callback' ),
+				$section,
+				$tax,
+				$args
+			);
+
+			add_settings_field(
+				'metabox_title',
+				__( 'Title', $this->name ),
+				array( $this, 'title_callback' ),
 				$section,
 				$tax,
 				$args
@@ -140,6 +155,43 @@ class Category_Metabox_Enhanced_Settings_Settings {
 		echo $html;
 
 	} // end context_callback
+
+	/**
+	* Callback function for context field
+	*
+	* @since 0.5.0
+	* @param  array $args
+	* @return string HTML for priority field
+	*/
+	public function priority_callback( $args ) {
+
+		$prioritys = array(
+			'high', 'core', 'default', 'low'
+		);
+		$value  = isset( $args[1]['priority'] ) ? $args[1]['priority'] : 'default';
+
+		$html = '<fieldset>';
+		foreach ( $prioritys as $priority ) {
+			$html .= '<label title="' . $priority . '"><input type="radio" name="' . $args[0] . '[priority]" value="' . $priority . '" ' . checked( $priority, $value, false ) . '> <span>' . ucfirst( $priority ) . '</span></label><br>';
+		}
+		$html .= '</fieldset>';
+
+		// $html .= '<p class="description">' . __( 'Select the option type', $this->name ) . '</p>';
+
+		echo $html;
+
+	} // end priority_callback
+
+	public function title_callback( $args ) {
+
+		$value  = isset( $args[1]['metabox_title'] ) ? $args[1]['metabox_title'] : '';
+
+		$html = '<input type="text" id="metabox_title" name="' . $args[0] . '[metabox_title]" value="' . $value . '" class="regular-text" />';
+		// $html .= '<p class="description">' . __( 'Enter your custom title for Featured Image Metabox.', $this->plugin_slug ) . '</p>';
+
+		echo $html;
+
+	} // end title_callback
 
 	/**
 	 * Validate inputs

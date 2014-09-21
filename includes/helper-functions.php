@@ -17,3 +17,20 @@ function of_cme_supported_taxonomies() {
 
         return $results;
 }
+
+/**
+ * Get default settings
+ *
+ * @since 0.5.0
+ */
+function of_cme_get_defaults() {
+
+        $defaults = array(
+                        'type' => 'checkbox',
+                        'context' => 'side',
+                        'priority' => 'default',
+                        'metabox_title' => ''
+                );
+
+        return $defaults;
+}
