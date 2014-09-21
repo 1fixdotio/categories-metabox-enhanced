@@ -104,6 +104,24 @@ class Category_Metabox_Enhanced_Settings_Settings {
 				$args
 			);
 
+			add_settings_field(
+				'indent',
+				__( 'Indent', $this->name ),
+				array( $this, 'indent_callback' ),
+				$section,
+				$tax,
+				$args
+			);
+
+			add_settings_field(
+				'allow_new_terms',
+				__( 'Allow new terms', $this->name ),
+				array( $this, 'allow_new_terms_callback' ),
+				$section,
+				$tax,
+				$args
+			);
+
 			register_setting(
 				$section,
 				$section,
@@ -213,6 +231,28 @@ class Category_Metabox_Enhanced_Settings_Settings {
 
 	} // end force_selection_callback
 
+	public function indent_callback( $args ) {
+
+		$value  = isset( $args[1]['indented'] ) ? $args[1]['indented'] : 0;
+
+		$html = '<label for="indent"><input type="checkbox" id="indent" name="' . $args[0] . '[indented]" value="1" ' . checked( $value, 1, false ) . ' /> Yes</label>';
+		$html .= '<p class="description">' . __( 'Check if child terms should be indent.', $this->name ) . '</p>';
+
+		echo $html;
+
+	} // end indent_callback
+
+	public function allow_new_terms_callback( $args ) {
+
+		$value  = isset( $args[1]['allow_new_terms'] ) ? $args[1]['allow_new_terms'] : 0;
+
+		$html = '<label for="allow_new_terms"><input type="checkbox" id="allow_new_terms" name="' . $args[0] . '[allow_new_terms]" value="1" ' . checked( $value, 1, false ) . ' /> Yes</label>';
+		$html .= '<p class="description">' . __( 'Chekc if allows adding of new terms from the metabox.', $this->name ) . '</p>';
+
+		echo $html;
+
+	} // end allow_new_terms_callback
+
 	/**
 	 * Validate inputs
 	 *
@@ -223,9 +263,10 @@ class Category_Metabox_Enhanced_Settings_Settings {
 	public function validate_inputs( $inputs ) {
 
 		$outputs = array();
+		$defaults = of_cme_get_defaults();
 
-		foreach( $inputs as $key => $value ) {
-			$outputs[$key] = sanitize_text_field( $value );
+		foreach( $defaults as $key => $v ) {
+			$outputs[$key] = ( isset( $inputs[$key] ) ) ? sanitize_text_field( $inputs[$key] ) : 0;
 		}
 
 		return apply_filters( 'cme_validate_inputs', $outputs, $inputs );

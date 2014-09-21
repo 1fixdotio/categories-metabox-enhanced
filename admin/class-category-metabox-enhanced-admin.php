@@ -197,7 +197,6 @@ class Category_Metabox_Enhanced_Admin {
 				${$tax . "_metabox"} = new Taxonomy_Single_Term( $tax, array(), $type );
 
 				unset( $defaults['type'] );
-
 				foreach ( $defaults as $key => $v ) {
 					$value = $options[$key];
 					${$tax . "_metabox"}->set( $key, $value );

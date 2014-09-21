@@ -172,7 +172,7 @@ class Category_Metabox_Enhanced {
 		$this->loader->add_filter( 'plugin_action_links_' . $plugin_basename, $plugin_admin, 'add_action_links' );
 
 		//Update the taxonomy metaboxes
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'customize_taxonomy_metaboxes' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'customize_taxonomy_metaboxes' );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
