@@ -142,7 +142,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
                 }
                 $html .= '</fieldset>';
 
-		// $html .= '<p class="description">' . __( 'Select the option type', $this->name ) . '</p>';
+		$html .= '<p class="description"><strong>' . __( 'Settings below won\'t work if option type is Checkbox.', $this->name ) . '</strong></p>';
 
 		echo $html;
 
