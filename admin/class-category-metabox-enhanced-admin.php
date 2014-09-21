@@ -205,7 +205,8 @@ class Category_Metabox_Enhanced_Admin {
 
 			if ( $type != 'checkbox' ) {
 				${$tax . "_metabox"} = new Taxonomy_Single_Term( $tax, array(), $type );
-				${$tax . "_metabox"}->set( 'priority', 'default' );
+				$context = $options['context'];
+				${$tax . "_metabox"}->set( 'context', $context );
 			}
 		}
 	}

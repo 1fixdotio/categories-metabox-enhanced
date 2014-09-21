@@ -32,7 +32,7 @@
 
 	<h2 class="nav-tab-wrapper">
 		<?php foreach ( $taxes as $tax ) { ?>
-		<a href="?page=category-metabox-enhanced&tab=<?php echo $tax; ?>" class="nav-tab <?php echo ( $tax == $active_tab ) ? 'nav-tab-active' : ''; ?>"><?php $taxonomy_object = get_taxonomy( $tax ); echo $taxonomy_object->labels->name; ?></a>
+		<a href="?page=category-metabox-enhanced&amp;tab=<?php echo $tax; ?>" class="nav-tab <?php echo ( $tax == $active_tab ) ? 'nav-tab-active' : ''; ?>"><?php $taxonomy_object = get_taxonomy( $tax ); echo $taxonomy_object->labels->name; ?></a>
 		<?php } ?>
 	</h2>
 

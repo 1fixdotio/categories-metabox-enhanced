@@ -41,7 +41,8 @@ class Category_Metabox_Enhanced_Settings_Settings {
 		$taxes = of_cme_supported_taxonomies();
 
 		$defaults = array(
-				'type' => 'checkbox'
+				'type' => 'checkbox',
+				'context' => 'side'
 			);
 
 		foreach ( $taxes as $tax ) {
@@ -65,6 +66,15 @@ class Category_Metabox_Enhanced_Settings_Settings {
 				'type',
 				__( 'Option Type', $this->name ),
 				array( $this, 'type_callback' ),
+				$section,
+				$tax,
+				$args
+			);
+
+			add_settings_field(
+				'context',
+				__( 'Position (Context)', $this->name ),
+				array( $this, 'context_callback' ),
 				$section,
 				$tax,
 				$args
@@ -104,6 +114,32 @@ class Category_Metabox_Enhanced_Settings_Settings {
 		echo $html;
 
 	} // end type_callback
+
+	/**
+	* Callback function for context field
+	*
+	* @since 0.5.0
+	* @param  array $args
+	* @return string HTML for context field
+	*/
+	public function context_callback( $args ) {
+
+		$contexts = array(
+			'normal', 'advanced', 'side'
+		);
+		$value  = isset( $args[1]['context'] ) ? $args[1]['context'] : 'side';
+
+		$html = '<fieldset>';
+		foreach ( $contexts as $context ) {
+			$html .= '<label title="' . $context . '"><input type="radio" name="' . $args[0] . '[context]" value="' . $context . '" ' . checked( $context, $value, false ) . '> <span>' . ucfirst( $context ) . '</span></label><br>';
+		}
+		$html .= '</fieldset>';
+
+		// $html .= '<p class="description">' . __( 'Select the option type', $this->name ) . '</p>';
+
+		echo $html;
+
+	} // end context_callback
 
 	/**
 	 * Validate inputs

@@ -5,7 +5,7 @@ Donate link: http://1fix.io/
 Tags: category, metabox, taxonomy
 Requires at least: 3.5
 Tested up to: 4.0
-Stable tag: 0.4.0
+Stable tag: 0.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,7 +18,7 @@ Thanks to [Taxonomy_Single_Term](https://github.com/WebDevStudios/Taxonomy_Singl
 With Categories Metabox Enhanced, you can:
 
 * Change the built-in Categories metabox to a single term UI, which means replacing the checkboxes with radio buttons or a select drop-down.
-* Apply the single term UI to the hierarchical custom taxonomies in the plugin's Settings page.
+* Apply the single term UI to other hierarchical taxonomies in the plugin's Settings page.
 * TODO - Customized the single term UI by setting these options:
 ** Priority and position of the metabox placement
 ** Title of the metabox
@@ -39,5 +39,5 @@ With Categories Metabox Enhanced, you can:
 
 == Changelog ==
 
-= 0.4.0 =
+= 0.5.0 =
 * The first version
