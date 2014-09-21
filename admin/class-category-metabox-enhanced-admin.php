@@ -112,7 +112,7 @@ class Category_Metabox_Enhanced_Admin {
 		if ( true == get_option( 'cme-display-activation-message' ) && 'plugins' == $screen->id ) {
 			$html  = '<div class="updated">';
 			$html .= '<p>';
-				$html .= sprintf( __( 'The plugin <strong>Categories Metabox Enhanced is activated.</strong> Check out all the options for this plugin in the <strong><a href="%s">Settings</a></strong> page.', $this->name ), admin_url( 'options-general.php?page=' . $this->name ) );
+				$html .= sprintf( __( 'Replace checkboxes in the Categories metabox with radio buttons or a select drop-down in the <strong><a href="%s">Settings</a></strong> page.', $this->name ), admin_url( 'options-general.php?page=' . $this->name ) );
 			$html .= '</p>';
 			$html .= '</div><!-- /.updated -->';
 
@@ -195,6 +195,7 @@ class Category_Metabox_Enhanced_Admin {
 
 			if ( $type != 'checkbox' ) {
 				${$tax . "_metabox"} = new Taxonomy_Single_Term( $tax, array(), $type );
+				${$tax . "_metabox"}->set( 'force_selection', true );
 
 				unset( $defaults['type'] );
 				foreach ( $defaults as $key => $v ) {

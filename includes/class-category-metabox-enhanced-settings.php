@@ -96,15 +96,6 @@ class Category_Metabox_Enhanced_Settings_Settings {
 			);
 
 			add_settings_field(
-				'force_selection',
-				__( 'Force Selection', $this->name ),
-				array( $this, 'force_selection_callback' ),
-				$section,
-				$tax,
-				$args
-			);
-
-			add_settings_field(
 				'indent',
 				__( 'Indent', $this->name ),
 				array( $this, 'indent_callback' ),
@@ -220,23 +211,12 @@ class Category_Metabox_Enhanced_Settings_Settings {
 
 	} // end title_callback
 
-	public function force_selection_callback( $args ) {
-
-		$value  = isset( $args[1]['force_selection'] ) ? $args[1]['force_selection'] : 0;
-
-		$html = '<label for="force_selection"><input type="checkbox" id="force_selection" name="' . $args[0] . '[force_selection]" value="1" ' . checked( $value, 1, false ) . ' /> Yes</label>';
-		$html .= '<p class="description">' . __( 'Check if a selection should be required. (Only work if the option type is radio or select.)', $this->name ) . '</p>';
-
-		echo $html;
-
-	} // end force_selection_callback
-
 	public function indent_callback( $args ) {
 
 		$value  = isset( $args[1]['indented'] ) ? $args[1]['indented'] : 0;
 
 		$html = '<label for="indent"><input type="checkbox" id="indent" name="' . $args[0] . '[indented]" value="1" ' . checked( $value, 1, false ) . ' /> Yes</label>';
-		$html .= '<p class="description">' . __( 'Check if child terms should be indent.', $this->name ) . '</p>';
+		$html .= '<p class="description">' . __( 'Check if child terms should be indent. (Only works if option type is radio.)', $this->name ) . '</p>';
 
 		echo $html;
 
