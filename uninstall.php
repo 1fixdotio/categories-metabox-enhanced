@@ -30,10 +30,11 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-
-$taxes = of_cme_supported_taxonomies();
+$taxes = get_taxonomies();
 foreach ( $taxes as $tax ) {
-	delete_option( 'category-metabox-enhanced_' . $tax );
+	if ( is_taxonomy_hierarchical( $tax ) ) {
+		delete_option( 'category-metabox-enhanced_' . $tax );
+	}
 }
 
 delete_option( 'cme-display-activation-message' );
