@@ -1,4 +1,4 @@
-=== Category Metabox Enhanced ===
+=== Categories Metabox Enhanced ===
 
 Contributors: 1fixdotio, yoren
 Donate link: http://1fix.io/
@@ -15,7 +15,7 @@ Replace the checkboxes with radio buttons or a select drop-down in the built-in 
 
 Thanks to [Taxonomy_Single_Term](https://github.com/WebDevStudios/Taxonomy_Single_Term), a library created by [WebDevStudios](http://webdevstudios.com/), it made my work much easier on creating this plugin.
 
-With Category Metabox Enhanced, you can:
+With Categories Metabox Enhanced, you can:
 
 * Change the built-in Categories metabox to a single term UI, which means replacing the checkboxes with radio buttons or a select drop-down.
 * Apply the single term UI to the hierarchical custom taxonomies in the plugin's Settings page.

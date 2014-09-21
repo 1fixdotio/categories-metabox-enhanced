@@ -112,7 +112,7 @@ class Category_Metabox_Enhanced_Admin {
 		if ( true == get_option( 'cme-display-activation-message' ) && 'plugins' == $screen->id ) {
 			$html  = '<div class="updated">';
 			$html .= '<p>';
-				$html .= sprintf( __( 'The plugin <strong>Category Metabox Enhanced is activated.</strong> Check out all the options for this plugin in the <strong><a href="%s">Settings</a></strong> page.', $this->name ), admin_url( 'options-general.php?page=' . $this->name ) );
+				$html .= sprintf( __( 'The plugin <strong>Categories Metabox Enhanced is activated.</strong> Check out all the options for this plugin in the <strong><a href="%s">Settings</a></strong> page.', $this->name ), admin_url( 'options-general.php?page=' . $this->name ) );
 			$html .= '</p>';
 			$html .= '</div><!-- /.updated -->';
 
@@ -139,8 +139,8 @@ class Category_Metabox_Enhanced_Admin {
 		 *
 		 */
 		$this->plugin_screen_hook_suffix = add_options_page(
-			__( 'Category Metabox Enhanced Settings', $this->name ),
-			__( 'Category Metabox Enhanced', $this->name ),
+			__( 'Categories Metabox Enhanced Settings', $this->name ),
+			__( 'Categories Metabox Enhanced', $this->name ),
 			'manage_options',
 			$this->name,
 			array( $this, 'display_plugin_admin_page' )
