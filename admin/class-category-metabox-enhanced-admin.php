@@ -178,19 +178,6 @@ class Category_Metabox_Enhanced_Admin {
 	}
 
 	/**
-	 * Build completely delete action url.
-	 *
-	 * @since 0.4.0
-	 *
-	 * @param  int    $post_id Post ID
-	 * @return string    Action url
-	 */
-	public function get_action_url( $post_id ) {
-
-		return wp_nonce_url( add_query_arg( array( 'action' => 'completely_delete', 'post' => $post_id ), admin_url( 'admin.php' ) ) );
-	}
-
-	/**
 	 * Customize taxonomy metaboxes
 	 *
 	 * @since 0.3.0

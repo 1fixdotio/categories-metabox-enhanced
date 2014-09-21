@@ -29,7 +29,8 @@ function of_cme_get_defaults() {
                         'type' => 'checkbox',
                         'context' => 'side',
                         'priority' => 'default',
-                        'metabox_title' => ''
+                        'metabox_title' => '',
+                        'force_selection' => 0
                 );
 
         return $defaults;

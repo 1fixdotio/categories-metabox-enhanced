@@ -95,6 +95,15 @@ class Category_Metabox_Enhanced_Settings_Settings {
 				$args
 			);
 
+			add_settings_field(
+				'force_selection',
+				__( 'Force Selection', $this->name ),
+				array( $this, 'force_selection_callback' ),
+				$section,
+				$tax,
+				$args
+			);
+
 			register_setting(
 				$section,
 				$section,
@@ -187,11 +196,22 @@ class Category_Metabox_Enhanced_Settings_Settings {
 		$value  = isset( $args[1]['metabox_title'] ) ? $args[1]['metabox_title'] : '';
 
 		$html = '<input type="text" id="metabox_title" name="' . $args[0] . '[metabox_title]" value="' . $value . '" class="regular-text" />';
-		// $html .= '<p class="description">' . __( 'Enter your custom title for Featured Image Metabox.', $this->plugin_slug ) . '</p>';
+		// $html .= '<p class="description">' . __( 'Enter your custom title for Featured Image Metabox.', $this->name ) . '</p>';
 
 		echo $html;
 
 	} // end title_callback
+
+	public function force_selection_callback( $args ) {
+
+		$value  = isset( $args[1]['force_selection'] ) ? $args[1]['force_selection'] : 0;
+
+		$html = '<label for="force_selection"><input type="checkbox" id="force_selection" name="' . $args[0] . '[force_selection]" value="1" ' . checked( $value, 1, false ) . ' /> Yes</label>';
+		$html .= '<p class="description">' . __( 'Check if a selection should be required. (Only work if the option type is radio or select.)', $this->name ) . '</p>';
+
+		echo $html;
+
+	} // end force_selection_callback
 
 	/**
 	 * Validate inputs
