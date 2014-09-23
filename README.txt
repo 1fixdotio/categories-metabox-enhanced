@@ -20,10 +20,10 @@ With Categories Metabox Enhanced, you can:
 * Change the built-in Categories metabox to a single term UI, which means replacing the checkboxes with radio buttons or a select drop-down.
 * Apply the single term UI to other hierarchical taxonomies in the plugin's Settings page.
 * Customized the single term UI by setting these options:
-** Priority and position of the metabox placement
-** Title of the metabox
-** If child-terms in the radio elements should be indenting
-** If adding of new terms from the metabox is enable
+ * Priority and position of the metabox placement
+ * Title of the metabox
+ * If child-terms in the radio elements should be indenting
+ * If adding of new terms from the metabox is enable
 
 == Installation ==
 
