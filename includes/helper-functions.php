@@ -31,7 +31,7 @@ function of_cme_get_defaults() {
                         'priority' => 'default',
                         'metabox_title' => '',
                         'indented' => 1,
-                        'allow_new_terms' => 0
+                        'allow_new_terms' => 1
                 );
 
         return $defaults;
