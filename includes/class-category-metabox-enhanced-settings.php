@@ -216,7 +216,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
 		$value  = isset( $args[1]['indented'] ) ? $args[1]['indented'] : 0;
 
 		$html = '<label for="indent"><input type="checkbox" id="indent" name="' . $args[0] . '[indented]" value="1" ' . checked( $value, 1, false ) . ' /> Yes</label>';
-		$html .= '<p class="description">' . __( 'Check if child terms should be indent. (Only works if option type is radio.)', $this->name ) . '</p>';
+		$html .= '<p class="description">' . __( 'Check if child terms should be indent.', $this->name ) . '</p>';
 
 		echo $html;
 
