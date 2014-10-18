@@ -22,7 +22,7 @@ With Categories Metabox Enhanced, you can:
 * Customized the single term UI by setting these options:
  * Priority and position of the metabox placement
  * Title of the metabox
- * If child-terms in the radio elements should be indenting
+ * If child-terms should be indenting
  * If adding of new terms from the metabox is enable
 
 == Installation ==
