@@ -5,7 +5,7 @@ Donate link: http://1fix.io/
 Tags: category, metabox, taxonomy
 Requires at least: 3.5
 Tested up to: 4.0
-Stable tag: 0.5.0
+Stable tag: 0.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,10 @@ With Categories Metabox Enhanced, you can:
 3. A settings page for this plugin
 
 == Changelog ==
+
+= 0.6.0 =
+* Indent the child-terms in select options
+* Remove unused CSS and JS files
 
 = 0.5.0 =
 * The first version
