@@ -1,11 +1,11 @@
 === Categories Metabox Enhanced ===
 
-Contributors: 1fixdotio, yoren
+Contributors: 1fixdotio
 Donate link: http://1fix.io/
 Tags: category, metabox, taxonomy
 Requires at least: 3.5
-Tested up to: 4.1
-Stable tag: 0.6.0
+Tested up to: 4.1.1
+Stable tag: 0.6.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,9 @@ With Categories Metabox Enhanced, you can:
 3. A settings page for this plugin
 
 == Changelog ==
+
+= 0.6.1 =
+* Remove git submodule from this plugin
 
 = 0.6.0 =
 * Indent the child-terms in select options
