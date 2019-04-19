@@ -179,7 +179,10 @@ class Category_Metabox_Enhanced_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->name, plugin_dir_url( __FILE__ ) . 'js/admin.js', array( 'jquery' ), $this->version, true );
+		$current_screen = get_current_screen();
+		if ( method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor() ) {
+			wp_enqueue_script( $this->name, plugin_dir_url( __FILE__ ) . 'js/admin.js', array( 'jquery' ), $this->version, true );
+		}
 
 	}
 
