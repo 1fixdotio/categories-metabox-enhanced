@@ -181,7 +181,20 @@ class Category_Metabox_Enhanced_Admin {
 
 		$current_screen = get_current_screen();
 		if ( method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor() ) {
-			wp_enqueue_script( $this->name, plugin_dir_url( __FILE__ ) . 'js/admin.js', array( 'jquery' ), $this->version, true );
+			$taxes = of_cme_supported_taxonomies();
+			foreach ( $taxes as $key => $tax ) {
+				$options = get_option( $this->name . '_' . $tax );
+				$type    = $options['type'];
+
+				if ( 'checkbox' === $type ) {
+					unset( $taxes[ $key ] );
+				}
+			}
+
+			if ( ! empty( $taxes ) ) {
+				wp_enqueue_script( $this->name, plugin_dir_url( __FILE__ ) . 'js/admin.js', array( 'jquery' ), $this->version, true );
+				wp_localize_script( $this->name, 'of_cme', array( 'supported_taxonomies' => wp_json_encode( $taxes ) ) );
+			}
 		}
 
 	}
