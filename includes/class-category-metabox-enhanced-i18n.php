@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Define the internationalization functionality
  *
@@ -31,7 +30,7 @@ class Category_Metabox_Enhanced_i18n {
 	 *
 	 * @since    0.1.0
 	 * @access   private
-	 * @var      string    $domain    The domain identifier for this plugin.
+	 * @var      string $domain The domain identifier for this plugin.
 	 */
 	private $domain;
 
@@ -53,8 +52,9 @@ class Category_Metabox_Enhanced_i18n {
 	/**
 	 * Set the domain equal to that of the specified domain.
 	 *
+	 * @param string $domain The domain that represents the locale of this plugin.
+	 *
 	 * @since    0.1.0
-	 * @param    string    $domain    The domain that represents the locale of this plugin.
 	 */
 	public function set_domain( $domain ) {
 		$this->domain = $domain;

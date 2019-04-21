@@ -1,21 +1,21 @@
 <?php
 /**
-* Get supported taxonomies
-*
-* @since 0.4.0
-*/
+ * Get supported taxonomies
+ *
+ * @since 0.4.0
+ */
 function of_cme_supported_taxonomies() {
 
-        $taxes = get_taxonomies();
-        $results = array();
+	$taxes   = get_taxonomies();
+	$results = array();
 
-        foreach ( $taxes as $tax ) {
-                if ( is_taxonomy_hierarchical( $tax ) ) {
-                        $results[] = $tax;
-                }
-        }
+	foreach ( $taxes as $tax ) {
+		if ( is_taxonomy_hierarchical( $tax ) ) {
+			$results[] = $tax;
+		}
+	}
 
-        return $results;
+	return $results;
 }
 
 /**
@@ -25,14 +25,14 @@ function of_cme_supported_taxonomies() {
  */
 function of_cme_get_defaults() {
 
-        $defaults = array(
-                        'type' => 'checkbox',
-                        'context' => 'side',
-                        'priority' => 'default',
-                        'metabox_title' => '',
-                        'indented' => 1,
-                        'allow_new_terms' => 1
-                );
+	$defaults = array(
+		'type'            => 'checkbox',
+		'context'         => 'side',
+		'priority'        => 'default',
+		'metabox_title'   => '',
+		'indented'        => 1,
+		'allow_new_terms' => 1,
+	);
 
-        return $defaults;
+	return $defaults;
 }

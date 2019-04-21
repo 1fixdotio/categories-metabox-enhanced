@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Fired during plugin deactivation
  *
@@ -25,12 +24,12 @@ class Category_Metabox_Enhanced_Deactivator {
 	/**
 	 * Fired when the plugin is deactivated.
 	 *
-	 * @since    0.2.0
-	 *
-	 * @param    boolean    $network_wide    True if WPMU superadmin uses
+	 * @param boolean $network_wide True if WPMU superadmin uses
 	 *                                       "Network Deactivate" action, false if
 	 *                                       WPMU is disabled or plugin is
 	 *                                       deactivated on an individual blog.
+	 *
+	 * @since    0.2.0
 	 */
 	public static function deactivate( $network_wide ) {
 
@@ -38,7 +37,7 @@ class Category_Metabox_Enhanced_Deactivator {
 
 			if ( $network_wide ) {
 
-				// Get all blog ids
+				// Get all blog ids.
 				$blogs = wp_get_sites();
 
 				foreach ( (array) $blogs as $blog ) {

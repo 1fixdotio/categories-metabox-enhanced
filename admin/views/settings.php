@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Provide a dashboard view for the plugin
  *
@@ -16,35 +15,37 @@
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 <div class="wrap">
 
-	<div id="icon-themes" class="icon32"></div>
-	<h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
+    <div id="icon-themes" class="icon32"></div>
+    <h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 	<?php // settings_errors(); ?>
 
 	<?php
-		$taxes = of_cme_supported_taxonomies();
+	$taxes = of_cme_supported_taxonomies();
 
-		if ( isset( $_GET['tab'] ) ) {
-			$active_tab = $_GET['tab'];
-		} else {
-			$active_tab = ( isset( $taxes[0] ) ) ? $taxes[0] : '';
-		}
+	if ( isset( $_GET['tab'] ) ) {
+		$active_tab = sanitize_text_field( $_GET['tab'] );
+	} else {
+		$active_tab = ( isset( $taxes[0] ) ) ? $taxes[0] : '';
+	}
 	?>
 
-	<h2 class="nav-tab-wrapper">
+    <h2 class="nav-tab-wrapper">
 		<?php foreach ( $taxes as $tax ) { ?>
-		<a href="?page=category-metabox-enhanced&amp;tab=<?php echo $tax; ?>" class="nav-tab <?php echo ( $tax == $active_tab ) ? 'nav-tab-active' : ''; ?>"><?php $taxonomy_object = get_taxonomy( $tax ); echo $taxonomy_object->labels->name; ?></a>
+            <a href="?page=category-metabox-enhanced&amp;tab=<?php echo $tax; ?>"
+                class="nav-tab <?php echo ( $tax === $active_tab ) ? 'nav-tab-active' : ''; ?>"><?php $taxonomy_object = get_taxonomy( $tax );
+				echo $taxonomy_object->labels->name; ?></a>
 		<?php } ?>
-	</h2>
+    </h2>
 
-	<form method="post" action="options.php">
+    <form method="post" action="options.php">
 		<?php
-			$section = 'category-metabox-enhanced_' . $active_tab;
+		$section = 'category-metabox-enhanced_' . $active_tab;
 
-			settings_fields( $section );
-			do_settings_sections( $section );
+		settings_fields( $section );
+		do_settings_sections( $section );
 
-			submit_button();
+		submit_button();
 		?>
-	</form>
+    </form>
 
 </div><!-- /.wrap -->

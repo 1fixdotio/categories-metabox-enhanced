@@ -39,7 +39,7 @@ With Categories Metabox Enhanced, you can:
 == Changelog ==
 
 = 0.7.0 =
-* Support Gutenberg editor: remove taxonomy panels from Gutenberg editor based on plugin settings
+* Support the Gutenberg editor in WordPress 5.0 and above: remove taxonomy panels from Gutenberg editor based on plugin settings
 
 = 0.6.1 =
 * Remove git submodule from this plugin

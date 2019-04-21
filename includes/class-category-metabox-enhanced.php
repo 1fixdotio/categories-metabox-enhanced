@@ -35,7 +35,7 @@ class Category_Metabox_Enhanced {
 	 *
 	 * @since    0.1.0
 	 * @access   protected
-	 * @var      Category_Metabox_Enhanced_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      Category_Metabox_Enhanced_Loader $loader Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
@@ -44,7 +44,7 @@ class Category_Metabox_Enhanced {
 	 *
 	 * @since    0.1.0
 	 * @access   protected
-	 * @var      string    $plugin_name    The string used to uniquely identify this plugin.
+	 * @var      string $plugin_name The string used to uniquely identify this plugin.
 	 */
 	protected $plugin_name;
 
@@ -53,7 +53,7 @@ class Category_Metabox_Enhanced {
 	 *
 	 * @since    0.1.0
 	 * @access   protected
-	 * @var      string    $version    The current version of the plugin.
+	 * @var      string $version The current version of the plugin.
 	 */
 	protected $version;
 
@@ -69,7 +69,7 @@ class Category_Metabox_Enhanced {
 	public function __construct() {
 
 		$this->plugin_name = 'category-metabox-enhanced';
-		$this->version = '0.7.0';
+		$this->version     = '0.7.0';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -161,7 +161,7 @@ class Category_Metabox_Enhanced {
 
 		$plugin_admin = new Category_Metabox_Enhanced_Admin( $this->get_plugin_name(), $this->get_version() );
 
-		// Display the admin notification
+		// Display the admin notification.
 		$this->loader->add_action( 'admin_notices', $plugin_admin, 'admin_notice_activation' );
 
 		// Add the options page and menu item.
@@ -171,7 +171,7 @@ class Category_Metabox_Enhanced {
 		$plugin_basename = plugin_basename( plugin_dir_path( dirname( __FILE__ ) ) . 'categories-metabox-enhanced.php' );
 		$this->loader->add_filter( 'plugin_action_links_' . $plugin_basename, $plugin_admin, 'add_action_links' );
 
-		//Update the taxonomy metaboxes.
+		// Update the taxonomy metaboxes.
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'customize_taxonomy_metaboxes' );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -191,8 +191,8 @@ class Category_Metabox_Enhanced {
 	 * The name of the plugin used to uniquely identify it within the context of
 	 * WordPress and to define internationalization functionality.
 	 *
-	 * @since     0.1.0
 	 * @return    string    The name of the plugin.
+	 * @since     0.1.0
 	 */
 	public function get_plugin_name() {
 		return $this->plugin_name;
@@ -201,8 +201,8 @@ class Category_Metabox_Enhanced {
 	/**
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
-	 * @since     0.1.0
 	 * @return    Category_Metabox_Enhanced_Loader    Orchestrates the hooks of the plugin.
+	 * @since     0.1.0
 	 */
 	public function get_loader() {
 		return $this->loader;
@@ -211,8 +211,8 @@ class Category_Metabox_Enhanced {
 	/**
 	 * Retrieve the version number of the plugin.
 	 *
-	 * @since     0.1.0
 	 * @return    string    The version number of the plugin.
+	 * @since     0.1.0
 	 */
 	public function get_version() {
 		return $this->version;

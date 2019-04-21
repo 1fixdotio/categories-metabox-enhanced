@@ -25,20 +25,21 @@ class Category_Metabox_Enhanced_Activator {
 	/**
 	 * Fired when the plugin is activated.
 	 *
-	 * @since    0.2.0
-	 *
-	 * @param    boolean    $network_wide    True if WPMU superadmin uses
+	 * @param boolean $network_wide True if WPMU superadmin uses
 	 *                                       "Network Activate" action, false if
 	 *                                       WPMU is disabled or plugin is
 	 *                                       activated on an individual blog.
+	 *
+	 * @since    0.2.0
+	 *
 	 */
 	public static function activate( $network_wide ) {
 
 		if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 
-			if ( $network_wide  ) {
+			if ( $network_wide ) {
 
-				// Get all blog ids
+				// Get all blog ids.
 				$blogs = wp_get_sites();
 
 				foreach ( (array) $blogs as $blog ) {
@@ -64,7 +65,7 @@ class Category_Metabox_Enhanced_Activator {
 	 */
 	private static function single_activate() {
 
-		if ( false == get_option( 'cme-display-activation-message' ) ) {
+		if ( false === (boolean) get_option( 'cme-display-activation-message' ) ) {
 			add_option( 'cme-display-activation-message', true );
 		}
 	}

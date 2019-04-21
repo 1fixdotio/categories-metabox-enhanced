@@ -27,7 +27,7 @@ class Category_Metabox_Enhanced_Admin {
 	 *
 	 * @since    0.1.0
 	 * @access   private
-	 * @var      string    $name    The ID of this plugin.
+	 * @var      string $name The ID of this plugin.
 	 */
 	private $name;
 
@@ -36,7 +36,7 @@ class Category_Metabox_Enhanced_Admin {
 	 *
 	 * @since    0.1.0
 	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
+	 * @var      string $version The current version of this plugin.
 	 */
 	private $version;
 
@@ -44,12 +44,12 @@ class Category_Metabox_Enhanced_Admin {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    0.1.0
-	 * @var      string    $name       The name of this plugin.
-	 * @var      string    $version    The version of this plugin.
+	 * @var      string $name The name of this plugin.
+	 * @var      string $version The version of this plugin.
 	 */
 	public function __construct( $name, $version ) {
 
-		$this->name = $name;
+		$this->name    = $name;
 		$this->version = $version;
 
 	}
@@ -63,10 +63,10 @@ class Category_Metabox_Enhanced_Admin {
 
 		$screen = get_current_screen();
 
-		if ( true == get_option( 'cme-display-activation-message' ) && 'plugins' == $screen->id ) {
+		if ( true === (boolean) get_option( 'cme-display-activation-message' ) && 'plugins' === $screen->id ) {
 			$html  = '<div class="updated">';
 			$html .= '<p>';
-				$html .= sprintf( __( 'Replace checkboxes in the Categories metabox with radio buttons or a select drop-down in the <strong><a href="%s">Settings</a></strong> page.', $this->name ), admin_url( 'options-general.php?page=' . $this->name ) );
+			$html .= sprintf( __( 'Replace checkboxes in the Categories metabox with radio buttons or a select drop-down in the <strong><a href="%s">Settings</a></strong> page.', $this->name ), admin_url( 'options-general.php?page=' . $this->name ) );
 			$html .= '</p>';
 			$html .= '</div><!-- /.updated -->';
 
@@ -89,8 +89,7 @@ class Category_Metabox_Enhanced_Admin {
 		 *
 		 * NOTE:  Alternative menu locations are available via WordPress administration menu functions.
 		 *
-		 *        Administration Menus: http://codex.wordpress.org/Administration_Menus
-		 *
+		 * Administration Menus: http://codex.wordpress.org/Administration_Menus
 		 */
 		$this->plugin_screen_hook_suffix = add_options_page(
 			__( 'Categories Metabox Enhanced Settings', $this->name ),
@@ -115,10 +114,11 @@ class Category_Metabox_Enhanced_Admin {
 	/**
 	 * Add settings action link to the plugins page.
 	 *
+	 * @param array<string> $links Action links.
+	 *
+	 * @return  array<string> Action links
 	 * @since    0.4.0
 	 *
-	 * @param array<string> $links Action links
-	 * @return  array<string> Action links
 	 */
 	public function add_action_links( $links ) {
 
@@ -142,8 +142,8 @@ class Category_Metabox_Enhanced_Admin {
 
 		foreach ( $taxes as $tax ) {
 			$defaults = of_cme_get_defaults();
-			$options = get_option( $this->name . '_' . $tax );
-			$options = wp_parse_args( $options, $defaults );
+			$options  = get_option( $this->name . '_' . $tax );
+			$options  = wp_parse_args( $options, $defaults );
 
 			$type = $options['type'];
 
@@ -153,7 +153,7 @@ class Category_Metabox_Enhanced_Admin {
 
 				unset( $defaults['type'] );
 				foreach ( $defaults as $key => $v ) {
-					$value = $options[$key];
+					$value = $options[ $key ];
 					${$tax . "_metabox"}->set( $key, $value );
 				}
 			}
@@ -168,8 +168,6 @@ class Category_Metabox_Enhanced_Admin {
 	public function enqueue_scripts() {
 
 		/**
-		 * This function is provided for demonstration purposes only.
-		 *
 		 * An instance of this class should be passed to the run() function
 		 * defined in Category_Metabox_Enhanced_Loader as all of the hooks are defined
 		 * in that particular class.

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The plugin bootstrap file
  *
@@ -67,4 +66,5 @@ function run_category_metabox_enhanced() {
 	$plugin->run();
 
 }
+
 run_category_metabox_enhanced();
