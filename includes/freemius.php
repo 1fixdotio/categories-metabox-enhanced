@@ -44,11 +44,6 @@ of_cme_fs()->add_action( 'after_uninstall', 'of_cme_fs_uninstall_cleanup' );
  */
 function of_cme_fs_uninstall_cleanup() {
 
-	// If uninstall not called from WordPress, then exit.
-	if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-		exit;
-	}
-
 	$taxes = get_taxonomies();
 	foreach ( $taxes as $tax ) {
 		if ( is_taxonomy_hierarchical( $tax ) ) {
