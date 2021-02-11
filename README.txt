@@ -5,7 +5,7 @@ Donate link: http://1fix.io/
 Tags: category, metabox, taxonomy
 Requires at least: 3.5
 Tested up to: 5.1.1
-Stable tag: 0.7.0
+Stable tag: 0.8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,9 @@ With Categories Metabox Enhanced, you can:
 3. A settings page for this plugin
 
 == Changelog ==
+
+= 0.8.0 =
+* Added Freemius integration.
 
 = 0.7.0 =
 * Support the Gutenberg editor in WordPress 5.0 and above: remove taxonomy panels from Gutenberg editor based on plugin settings
