@@ -151,6 +151,10 @@ class Category_Metabox_Enhanced_Admin {
 				${$tax . "_metabox"} = new Taxonomy_Single_Term( $tax, array(), $type );
 				${$tax . "_metabox"}->set( 'force_selection', true );
 
+				if ( of_cme_fs()->is__premium_only() ) {
+					${$tax . "_metabox"}->set( 'default', null );
+				}
+
 				unset( $defaults['type'] );
 				foreach ( $defaults as $key => $v ) {
 					$value = $options[ $key ];
