@@ -57,8 +57,6 @@ class Category_Metabox_Enhanced_Admin {
 	/**
 	 * Display admin notice after plugin activated
 	 *
-	 * @deprecated 0.8.0
-	 *
 	 * @since 0.2.0
 	 */
 	public function admin_notice_activation() {
