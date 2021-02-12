@@ -3,7 +3,7 @@
 /**
  * The dashboard-specific functionality of the plugin.
  *
- * @link       http://1fix.io
+ * @link       https://1fix.io
  * @since      0.1.0
  *
  * @package    Category_Metabox_Enhanced
@@ -164,6 +164,7 @@ class Category_Metabox_Enhanced_Admin {
 	 * Register the JavaScript for the admin area.
 	 *
 	 * @since 0.7.0
+	 * @since 0.8.0 Added CSS to fix the select UI styling.
 	 */
 	public function enqueue_scripts() {
 
@@ -179,19 +180,27 @@ class Category_Metabox_Enhanced_Admin {
 
 		$current_screen = get_current_screen();
 		if ( method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor() ) {
-			$taxes = of_cme_supported_taxonomies();
+			$taxes      = of_cme_supported_taxonomies();
+			$has_select = false;
+
 			foreach ( $taxes as $key => $tax ) {
 				$options = get_option( $this->name . '_' . $tax );
 				$type    = $options['type'];
 
 				if ( 'checkbox' === $type ) {
 					unset( $taxes[ $key ] );
+				} elseif ( 'select' === $type ) {
+					$has_select = true;
 				}
 			}
 
 			if ( ! empty( $taxes ) ) {
 				wp_enqueue_script( $this->name, plugin_dir_url( __FILE__ ) . 'js/admin.js', array( 'jquery' ), $this->version, true );
 				wp_localize_script( $this->name, 'of_cme', array( 'supported_taxonomies' => wp_json_encode( $taxes ) ) );
+
+				if ( $has_select ) {
+					wp_enqueue_style( $this->name, plugin_dir_url( __FILE__ ) . 'css/admin.css', array(), $this->version, 'all' );
+				}
 			}
 		}
 

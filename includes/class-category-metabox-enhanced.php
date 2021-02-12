@@ -6,7 +6,7 @@
  * A class definition that includes attributes and functions used across both the
  * public-facing side of the site and the dashboard.
  *
- * @link       http://1fix.io
+ * @link       https://1fix.io
  * @since      0.1.0
  *
  * @package    Category_Metabox_Enhanced
