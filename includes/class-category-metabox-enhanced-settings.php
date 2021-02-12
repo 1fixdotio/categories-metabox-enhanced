@@ -54,14 +54,14 @@ class Category_Metabox_Enhanced_Settings_Settings {
 
 			add_settings_section(
 				$tax,
-				sprintf( __( '%s Metabox', $this->name ), $taxonomy_object->labels->name ),
+				sprintf( __( '%s Metabox', 'of-cme' ), $taxonomy_object->labels->name ),
 				'',
 				$section
 			);
 
 			add_settings_field(
 				'type',
-				__( 'Option Type', $this->name ),
+				__( 'Option Type', 'of-cme' ),
 				array( $this, 'type_callback' ),
 				$section,
 				$tax,
@@ -70,7 +70,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
 
 			add_settings_field(
 				'context',
-				__( 'Position (Context)', $this->name ),
+				__( 'Position (Context)', 'of-cme' ),
 				array( $this, 'context_callback' ),
 				$section,
 				$tax,
@@ -79,7 +79,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
 
 			add_settings_field(
 				'priority',
-				__( 'Priority', $this->name ),
+				__( 'Priority', 'of-cme' ),
 				array( $this, 'priority_callback' ),
 				$section,
 				$tax,
@@ -88,7 +88,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
 
 			add_settings_field(
 				'metabox_title',
-				__( 'Title', $this->name ),
+				__( 'Title', 'of-cme' ),
 				array( $this, 'title_callback' ),
 				$section,
 				$tax,
@@ -97,7 +97,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
 
 			add_settings_field(
 				'indent',
-				__( 'Indent', $this->name ),
+				__( 'Indent', 'of-cme' ),
 				array( $this, 'indent_callback' ),
 				$section,
 				$tax,
@@ -106,7 +106,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
 
 			add_settings_field(
 				'allow_new_terms',
-				__( 'Allow new terms', $this->name ),
+				__( 'Allow new terms', 'of-cme' ),
 				array( $this, 'allow_new_terms_callback' ),
 				$section,
 				$tax,
@@ -144,7 +144,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
 		}
 		$html .= '</fieldset>';
 
-		$html .= '<p class="description"><strong>' . __( 'Settings below won\'t work if option type is Checkbox.', $this->name ) . '</strong></p>';
+		$html .= '<p class="description"><strong>' . __( 'Settings below won\'t work if option type is Checkbox.', 'of-cme' ) . '</strong></p>';
 
 		echo $html;
 
@@ -208,7 +208,6 @@ class Category_Metabox_Enhanced_Settings_Settings {
 		$value = isset( $args[1]['metabox_title'] ) ? $args[1]['metabox_title'] : '';
 
 		$html = '<input type="text" id="metabox_title" name="' . $args[0] . '[metabox_title]" value="' . $value . '" class="regular-text" />';
-		// $html .= '<p class="description">' . __( 'Enter your custom title for Featured Image Metabox.', $this->name ) . '</p>';
 
 		echo $html;
 
@@ -219,7 +218,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
 		$value = isset( $args[1]['indented'] ) ? $args[1]['indented'] : 0;
 
 		$html = '<label for="indent"><input type="checkbox" id="indent" name="' . $args[0] . '[indented]" value="1" ' . checked( $value, 1, false ) . ' /> Yes</label>';
-		$html .= '<p class="description">' . __( 'Check if child terms should be indent.', $this->name ) . '</p>';
+		$html .= '<p class="description">' . __( 'Check if child terms should be indent.', 'of-cme' ) . '</p>';
 
 		echo $html;
 
@@ -230,7 +229,8 @@ class Category_Metabox_Enhanced_Settings_Settings {
 		$value = isset( $args[1]['allow_new_terms'] ) ? $args[1]['allow_new_terms'] : 0;
 
 		$html = '<label for="allow_new_terms"><input type="checkbox" id="allow_new_terms" name="' . $args[0] . '[allow_new_terms]" value="1" ' . checked( $value, 1, false ) . ' /> Yes</label>';
-		$html .= '<p class="description">' . __( 'Chekc if allows adding of new terms from the metabox.', $this->name ) . '</p>';
+		/* translators: 1. Open strong tag. 2. Close String tag. */
+		$html .= '<p class="description">' . sprintf( esc_html__( 'Check if allows adding of new terms from the metabox. %1$sIt does not work properly when the Option Type is Select.%2$s', 'of-cme' ), '<strong>', '</strong>' ) . '</p>';
 
 		echo $html;
 
