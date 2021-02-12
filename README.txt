@@ -42,7 +42,7 @@ With Categories Metabox Enhanced, you can:
 * Update the Taxonomy_Single_Term library and some cosmetic fixes.
 
 = 0.7.0 =
-* Support the single term UI in the Gutenberg sidebar Categories/Taxonomies panels.
+* Support the single term UI in Gutenberg sidebar Categories/Taxonomies panels.
 
 = 0.6.1 =
 * Remove git submodule from this plugin.
