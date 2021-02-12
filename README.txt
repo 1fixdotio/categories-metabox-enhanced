@@ -9,7 +9,7 @@ Stable tag: 0.8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Replace the checkboxes with radio buttons or a select drop-down in the built-in Categories metabox.
+Replace the checkboxes with radio buttons or a select drop-down in the built-in Categories metabox and Gutenberg sidebar panel.
 
 == Description ==
 
@@ -17,13 +17,13 @@ Thanks to [Taxonomy_Single_Term](https://github.com/WebDevStudios/Taxonomy_Singl
 
 With Categories Metabox Enhanced, you can:
 
-* Change the built-in Categories metabox to a single term UI, which means replacing the checkboxes with radio buttons or a select drop-down.
+* Change the built-in Categories metabox/panel to a single term UI, which means replacing the checkboxes with radio buttons or a select drop-down.
 * Apply the single term UI to other hierarchical taxonomies in the plugin's Settings page.
 * Customized the single term UI by setting these options:
- * Priority and position of the metabox placement
- * Title of the metabox
- * If child-terms should be indenting
- * If adding of new terms from the metabox is enable
+ * Priority and position of the metabox placement.
+ * Title of the metabox.
+ * If child-terms should be indenting.
+ * If adding of new terms from the metabox is enable.
 
 == Installation ==
 
@@ -42,14 +42,14 @@ With Categories Metabox Enhanced, you can:
 * Added Freemius integration.
 
 = 0.7.0 =
-* Support the Gutenberg editor in WordPress 5.0 and above: remove taxonomy panels from Gutenberg editor based on plugin settings
+* Support the single term UI in the Gutenberg sidebar Categories/Taxonomies panels.
 
 = 0.6.1 =
-* Remove git submodule from this plugin
+* Remove git submodule from this plugin.
 
 = 0.6.0 =
-* Indent the child-terms in select options
-* Remove unused CSS and JS files
+* Indent the child-terms in select options.
+* Remove unused CSS and JS files.
 
 = 0.5.0 =
-* The first version
+* The first version.
