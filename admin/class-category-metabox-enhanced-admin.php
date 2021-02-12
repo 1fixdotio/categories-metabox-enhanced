@@ -57,6 +57,8 @@ class Category_Metabox_Enhanced_Admin {
 	/**
 	 * Display admin notice after plugin activated
 	 *
+	 * @deprecated 0.8.0
+	 *
 	 * @since 0.2.0
 	 */
 	public function admin_notice_activation() {
@@ -150,10 +152,6 @@ class Category_Metabox_Enhanced_Admin {
 			if ( $type != 'checkbox' ) {
 				${$tax . "_metabox"} = new Taxonomy_Single_Term( $tax, array(), $type );
 				${$tax . "_metabox"}->set( 'force_selection', true );
-
-				if ( of_cme_fs()->is__premium_only() ) {
-					${$tax . "_metabox"}->set( 'default', null );
-				}
 
 				unset( $defaults['type'] );
 				foreach ( $defaults as $key => $v ) {

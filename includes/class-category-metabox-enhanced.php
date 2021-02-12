@@ -161,9 +161,6 @@ class Category_Metabox_Enhanced {
 
 		$plugin_admin = new Category_Metabox_Enhanced_Admin( $this->get_plugin_name(), $this->get_version() );
 
-		// Display the admin notification.
-		$this->loader->add_action( 'admin_notices', $plugin_admin, 'admin_notice_activation' );
-
 		// Add the options page and menu item.
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
 
