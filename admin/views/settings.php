@@ -4,7 +4,7 @@
  *
  * This file is used to markup the public-facing aspects of the plugin.
  *
- * @link       http://1fix.io
+ * @link       https://1fix.io
  * @since      0.4.0
  *
  * @package    Category_Metabox_Enhanced

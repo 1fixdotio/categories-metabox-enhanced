@@ -7,17 +7,17 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              http://1fix.io
+ * @link              https://1fix.io
  * @since             0.1.0
  * @package           Category_Metabox_Enhanced
  *
  * @wordpress-plugin
  * Plugin Name:       Categories Metabox Enhanced
- * Plugin URI:        http://1fix.io/category-metabox-enhanced/
+ * Plugin URI:        https://1fix.io/category-metabox-enhanced/
  * Description:       Replace the checkboxes with radio buttons or a select drop-down in the built-in Categories metabox.
  * Version:           0.8.0
  * Author:            1Fix.io
- * Author URI:        http://1fix.io/
+ * Author URI:        https://1fix.io/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       of-cme

@@ -2,7 +2,7 @@
 /**
  * Register all actions and filters for the plugin
  *
- * @link       http://1fix.io
+ * @link       https://1fix.io
  * @since      0.1.0
  *
  * @package    Category_Metabox_Enhanced
