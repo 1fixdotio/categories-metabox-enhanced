@@ -199,10 +199,11 @@ function TaxonomyPanelInner( { taxonomy } ) {
 						</li>
 					) ) }
 				</ul>
-				{ /* Mirrors the classic editor's "Clear" affordance, which
-				   Taxonomy_Single_Term renders only when force_selection is
-				   false. Without this, the toggle has no visible effect on
-				   radio-type taxonomies in the Block Editor. */ }
+				{ /* Provides a Clear affordance equivalent to the classic
+				   editor's. The bundled Taxonomy_Single_Term library renders
+				   its Clear button unconditionally — a known cosmetic quirk
+				   when force_selection is on — so we render the stricter
+				   correct behavior here, gated on the user-facing setting. */ }
 				{ ! forceSelection && selectedId && (
 					<Button
 						variant="link"
