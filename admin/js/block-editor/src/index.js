@@ -77,9 +77,15 @@ function TaxonomyPanelInner( { taxonomy } ) {
 		[ restBase ]
 	);
 
-	const { editPost } = useDispatch( 'core/editor' );
-	const { removeEditorPanel } = useDispatch( 'core/edit-post' );
+	const editorActions = useDispatch( 'core/editor' );
+	const editPostActions = useDispatch( 'core/edit-post' );
 	const { saveEntityRecord, invalidateResolution } = useDispatch( 'core' );
+
+	const { editPost } = editorActions;
+	// `removeEditorPanel` moved to `core/editor` in WP 6.6; `core/edit-post`
+	// proxies for back compat. Prefer the canonical store.
+	const removeEditorPanel =
+		editorActions.removeEditorPanel || editPostActions.removeEditorPanel;
 
 	const { records: terms, hasResolved, totalItems } = useEntityRecords(
 		'taxonomy',
