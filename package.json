@@ -1,6 +1,6 @@
 {
   "name": "categories-metabox-enhanced",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Replace the checkboxes with radio buttons or a select drop-down in the built-in Categories metabox and Block Editor sidebar.",
   "private": true,
   "license": "GPL-2.0+",

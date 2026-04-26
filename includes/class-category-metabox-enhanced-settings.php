@@ -113,6 +113,15 @@ class Category_Metabox_Enhanced_Settings_Settings {
 				$args
 			);
 
+			add_settings_field(
+				'force_selection',
+				__( 'Force selection', 'of-cme' ),
+				array( $this, 'force_selection_callback' ),
+				$section,
+				$tax,
+				$args
+			);
+
 			register_setting(
 				$section,
 				$section,
@@ -238,6 +247,20 @@ class Category_Metabox_Enhanced_Settings_Settings {
 		echo $html;
 
 	} // end allow_new_terms_callback
+
+	public function force_selection_callback( $args ) {
+
+		// Default to 1 so existing installs (whose saved option lacks this key)
+		// render in sync with of_cme_get_defaults(), matching the long-standing
+		// classic-editor behavior of hiding the "None" option.
+		$value = isset( $args[1]['force_selection'] ) ? $args[1]['force_selection'] : 1;
+
+		$html  = '<label for="force_selection"><input type="checkbox" id="force_selection" name="' . $args[0] . '[force_selection]" value="1" ' . checked( $value, 1, false ) . ' /> Yes</label>';
+		$html .= '<p class="description">' . __( 'Require a term to be selected. In the classic editor this hides the "None" option; in the Block Editor sidebar it removes "— Select —" once a term is chosen and substitutes the first term on save when none is provided.', 'of-cme' ) . '</p>';
+
+		echo $html;
+
+	} // end force_selection_callback
 
 	/**
 	 * Validate inputs

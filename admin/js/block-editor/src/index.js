@@ -68,6 +68,7 @@ function TaxonomyPanelInner( { taxonomy } ) {
 		type,
 		indented,
 		allow_new_terms: allowNewTerms,
+		force_selection: forceSelection,
 		panel_title: panelTitle,
 	} = taxonomy;
 
@@ -154,10 +155,17 @@ function TaxonomyPanelInner( { taxonomy } ) {
 			return <p>{ __( 'No terms found.', 'of-cme' ) }</p>;
 		}
 		if ( type === 'select' ) {
+			// With force_selection on, suppress the "— Select —" option once a
+			// term has been picked so the user can't deselect back to empty.
+			// Initial empty state still shows it; the server-side filter
+			// substitutes the first term if the post is saved with none.
+			const showNoOption = ! forceSelection || ! selectedId;
 			return (
 				<TreeSelect
 					label=""
-					noOptionLabel={ __( '— Select —', 'of-cme' ) }
+					noOptionLabel={
+						showNoOption ? __( '— Select —', 'of-cme' ) : undefined
+					}
 					tree={ tree }
 					selectedId={ selectedId }
 					onChange={ selectTerm }
