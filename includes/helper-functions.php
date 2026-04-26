@@ -38,6 +38,33 @@ function of_cme_get_defaults() {
 }
 
 /**
+ * Get the parsed settings for a taxonomy, with defaults applied.
+ *
+ * @since 0.8.0
+ *
+ * @param string $taxonomy Taxonomy slug.
+ * @return array<string, mixed>
+ */
+function of_cme_get_taxonomy_options( $taxonomy ) {
+	return wp_parse_args(
+		get_option( 'category-metabox-enhanced_' . $taxonomy ),
+		of_cme_get_defaults()
+	);
+}
+
+/**
+ * Whether the configured option type renders the single-term UI.
+ *
+ * @since 0.8.0
+ *
+ * @param string $type Option type.
+ * @return bool
+ */
+function of_cme_is_single_term_type( $type ) {
+	return in_array( $type, array( 'radio', 'select' ), true );
+}
+
+/**
  * Enforce the single-term invariant for taxonomies configured as radio/select.
  *
  * The Block Editor sidebar UI only sends one term, but a REST or programmatic
@@ -60,12 +87,8 @@ function of_cme_enforce_single_term( $terms, $object_id, $taxonomy ) {
 		return $terms;
 	}
 
-	$options = get_option( 'category-metabox-enhanced_' . $taxonomy );
-	if ( ! is_array( $options ) || empty( $options['type'] ) ) {
-		return $terms;
-	}
-
-	if ( ! in_array( $options['type'], array( 'radio', 'select' ), true ) ) {
+	$options = of_cme_get_taxonomy_options( $taxonomy );
+	if ( ! of_cme_is_single_term_type( $options['type'] ) ) {
 		return $terms;
 	}
 

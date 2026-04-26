@@ -143,13 +143,9 @@ class Category_Metabox_Enhanced_Admin {
 		$taxes = of_cme_supported_taxonomies();
 
 		foreach ( $taxes as $tax ) {
-			$defaults = of_cme_get_defaults();
-			$options  = get_option( $this->name . '_' . $tax );
-			$options  = wp_parse_args( $options, $defaults );
+			$options = of_cme_get_taxonomy_options( $tax );
 
-			$type = $options['type'];
-
-			if ( 'checkbox' === $type ) {
+			if ( ! of_cme_is_single_term_type( $options['type'] ) ) {
 				continue;
 			}
 
@@ -171,13 +167,13 @@ class Category_Metabox_Enhanced_Admin {
 				continue;
 			}
 
-			${$tax . '_metabox'} = new Taxonomy_Single_Term( $tax, $classic_post_types, $type );
-			${$tax . '_metabox'}->set( 'force_selection', true );
+			$metabox = new Taxonomy_Single_Term( $tax, $classic_post_types, $options['type'] );
+			$metabox->set( 'force_selection', true );
 
-			unset( $defaults['type'] );
-			foreach ( $defaults as $key => $v ) {
-				$value = $options[ $key ];
-				${$tax . '_metabox'}->set( $key, $value );
+			$schema = of_cme_get_defaults();
+			unset( $schema['type'] );
+			foreach ( array_keys( $schema ) as $key ) {
+				$metabox->set( $key, $options[ $key ] );
 			}
 		}
 	}
@@ -190,13 +186,12 @@ class Category_Metabox_Enhanced_Admin {
 	 * @return array<int, array<string, mixed>>
 	 */
 	private function block_editor_taxonomies() {
-		$defaults = of_cme_get_defaults();
-		$payload  = array();
+		$payload = array();
 
 		foreach ( of_cme_supported_taxonomies() as $tax_slug ) {
-			$options = wp_parse_args( get_option( $this->name . '_' . $tax_slug ), $defaults );
+			$options = of_cme_get_taxonomy_options( $tax_slug );
 
-			if ( ! in_array( $options['type'], array( 'radio', 'select' ), true ) ) {
+			if ( ! of_cme_is_single_term_type( $options['type'] ) ) {
 				continue;
 			}
 

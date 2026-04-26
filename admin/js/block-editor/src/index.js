@@ -13,14 +13,19 @@ import {
 } from '@wordpress/components';
 import { useEffect, useMemo, useState, Fragment } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import apiFetch from '@wordpress/api-fetch';
 
 // Canonical location since WP 6.6; fall back to the legacy export for older WP.
 const PluginDocumentSettingPanel =
 	editorPkg.PluginDocumentSettingPanel ||
 	editPostPkg.PluginDocumentSettingPanel;
 
-const config = window.ofCmeBlockEditor || { taxonomies: [] };
+const TERMS_QUERY = {
+	per_page: 100,
+	_fields: 'id,name,parent',
+	context: 'view',
+	orderby: 'name',
+	order: 'asc',
+};
 
 function buildTree( terms, parentId = 0 ) {
 	return terms
@@ -74,17 +79,12 @@ function TaxonomyPanelInner( { taxonomy } ) {
 
 	const { editPost } = useDispatch( 'core/editor' );
 	const { removeEditorPanel } = useDispatch( 'core/edit-post' );
+	const { saveEntityRecord, invalidateResolution } = useDispatch( 'core' );
 
 	const { records: terms, hasResolved, totalItems } = useEntityRecords(
 		'taxonomy',
 		slug,
-		{
-			per_page: 100,
-			_fields: 'id,name,parent',
-			context: 'view',
-			orderby: 'name',
-			order: 'asc',
-		}
+		TERMS_QUERY
 	);
 
 	const canCreate = useSelect(
@@ -97,7 +97,6 @@ function TaxonomyPanelInner( { taxonomy } ) {
 	const [ createError, setCreateError ] = useState( null );
 
 	const tree = useMemo( () => buildTree( terms || [] ), [ terms ] );
-	const flat = useMemo( () => flattenIndented( tree ), [ tree ] );
 
 	useEffect( () => {
 		removeEditorPanel( `taxonomy-panel-${ slug }` );
@@ -120,11 +119,14 @@ function TaxonomyPanelInner( { taxonomy } ) {
 		setCreating( true );
 		setCreateError( null );
 		try {
-			const created = await apiFetch( {
-				path: `/wp/v2/${ restBase }`,
-				method: 'POST',
-				data: { name },
-			} );
+			const created = await saveEntityRecord( 'taxonomy', slug, { name } );
+			// saveEntityRecord adds the record to the entity store but does not
+			// refresh existing query lists; invalidate so the new term appears.
+			invalidateResolution( 'getEntityRecords', [
+				'taxonomy',
+				slug,
+				TERMS_QUERY,
+			] );
 			setNewTermName( '' );
 			selectTerm( String( created.id ) );
 		} catch ( e ) {
@@ -134,16 +136,60 @@ function TaxonomyPanelInner( { taxonomy } ) {
 		}
 	};
 
+	const renderTermList = () => {
+		if ( ! hasResolved ) {
+			return <Spinner />;
+		}
+		if ( ! terms || terms.length === 0 ) {
+			return <p>{ __( 'No terms found.', 'of-cme' ) }</p>;
+		}
+		if ( type === 'select' ) {
+			return (
+				<TreeSelect
+					label=""
+					noOptionLabel={ __( '— Select —', 'of-cme' ) }
+					tree={ tree }
+					selectedId={ selectedId }
+					onChange={ selectTerm }
+				/>
+			);
+		}
+		return (
+			<ul className="of-cme-radio-list">
+				{ flattenIndented( tree ).map( ( node ) => (
+					<li
+						key={ node.id }
+						style={ {
+							paddingLeft: indented
+								? `${ node.depth * 16 }px`
+								: 0,
+							listStyle: 'none',
+							margin: '4px 0',
+						} }
+					>
+						<label>
+							<input
+								type="radio"
+								name={ `of-cme-${ slug }` }
+								value={ node.id }
+								checked={ selectedId === node.id }
+								onChange={ () => selectTerm( node.id ) }
+							/>{ ' ' }
+							{ node.name }
+						</label>
+					</li>
+				) ) }
+			</ul>
+		);
+	};
+
 	return (
 		<PluginDocumentSettingPanel
 			name={ `of-cme-${ slug }` }
 			title={ panelTitle }
 			className={ `of-cme-panel of-cme-panel-${ slug }` }
 		>
-			{ ! hasResolved && <Spinner /> }
-			{ hasResolved && ( ! terms || terms.length === 0 ) && (
-				<p>{ __( 'No terms found.', 'of-cme' ) }</p>
-			) }
+			{ renderTermList() }
 			{ truncated && (
 				<Notice status="warning" isDismissible={ false }>
 					{ sprintf(
@@ -156,42 +202,6 @@ function TaxonomyPanelInner( { taxonomy } ) {
 						totalItems
 					) }
 				</Notice>
-			) }
-			{ hasResolved && terms && terms.length > 0 && type === 'select' && (
-				<TreeSelect
-					label=""
-					noOptionLabel={ __( '— Select —', 'of-cme' ) }
-					tree={ tree }
-					selectedId={ selectedId }
-					onChange={ selectTerm }
-				/>
-			) }
-			{ hasResolved && terms && terms.length > 0 && type === 'radio' && (
-				<ul className="of-cme-radio-list">
-					{ flat.map( ( node ) => (
-						<li
-							key={ node.id }
-							style={ {
-								paddingLeft: indented
-									? `${ node.depth * 16 }px`
-									: 0,
-								listStyle: 'none',
-								margin: '4px 0',
-							} }
-						>
-							<label>
-								<input
-									type="radio"
-									name={ `of-cme-${ slug }` }
-									value={ node.id }
-									checked={ selectedId === node.id }
-									onChange={ () => selectTerm( node.id ) }
-								/>{ ' ' }
-								{ node.name }
-							</label>
-						</li>
-					) ) }
-				</ul>
 			) }
 			{ allowNewTerms && canCreate && (
 				<div className="of-cme-add-term" style={ { marginTop: 12 } }>
@@ -222,13 +232,14 @@ function TaxonomyPanelInner( { taxonomy } ) {
 }
 
 domReady( () => {
-	if ( ! config.taxonomies || ! config.taxonomies.length ) {
+	const taxonomies = window.ofCmeBlockEditor?.taxonomies || [];
+	if ( ! taxonomies.length ) {
 		return;
 	}
 	registerPlugin( 'of-cme-panel', {
 		render: () => (
 			<Fragment>
-				{ config.taxonomies.map( ( tax ) => (
+				{ taxonomies.map( ( tax ) => (
 					<TaxonomyPanel key={ tax.slug } taxonomy={ tax } />
 				) ) }
 			</Fragment>
