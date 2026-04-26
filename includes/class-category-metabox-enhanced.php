@@ -69,7 +69,7 @@ class Category_Metabox_Enhanced {
 	public function __construct() {
 
 		$this->plugin_name = 'category-metabox-enhanced';
-		$this->version     = '0.7.0';
+		$this->version     = '0.8.0';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -174,7 +174,11 @@ class Category_Metabox_Enhanced {
 		// Update the taxonomy metaboxes.
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'customize_taxonomy_metaboxes' );
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		// Per-post: hide the classic metabox when the post will render in the Block Editor.
+		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'suppress_classic_metabox_in_block_editor', 20, 2 );
+
+		// Block Editor sidebar panel.
+		$this->loader->add_action( 'enqueue_block_editor_assets', $plugin_admin, 'enqueue_block_editor_assets' );
 
 	}
 

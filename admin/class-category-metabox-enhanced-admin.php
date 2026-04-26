@@ -132,78 +132,135 @@ class Category_Metabox_Enhanced_Admin {
 	}
 
 	/**
-	 * Customize taxonomy metaboxes
+	 * Register the single-term metabox for every post type the taxonomy
+	 * is associated with. Whether the metabox actually renders is decided
+	 * per-post in suppress_classic_metabox_in_block_editor(), which runs
+	 * later on add_meta_boxes.
 	 *
 	 * @since 0.3.0
 	 */
 	public function customize_taxonomy_metaboxes() {
 
-		$taxes = of_cme_supported_taxonomies();
+		foreach ( of_cme_supported_taxonomies() as $tax ) {
+			$options = of_cme_get_taxonomy_options( $tax );
 
-		foreach ( $taxes as $tax ) {
-			$defaults = of_cme_get_defaults();
-			$options  = get_option( $this->name . '_' . $tax );
-			$options  = wp_parse_args( $options, $defaults );
+			if ( ! of_cme_is_single_term_type( $options['type'] ) ) {
+				continue;
+			}
 
-			$type = $options['type'];
+			$metabox = new Taxonomy_Single_Term( $tax, array(), $options['type'] );
+			$metabox->set( 'force_selection', true );
 
-			if ( $type != 'checkbox' ) {
-				${$tax . "_metabox"} = new Taxonomy_Single_Term( $tax, array(), $type );
-				${$tax . "_metabox"}->set( 'force_selection', true );
-
-				unset( $defaults['type'] );
-				foreach ( $defaults as $key => $v ) {
-					$value = $options[ $key ];
-					${$tax . "_metabox"}->set( $key, $value );
-				}
+			$schema = of_cme_get_defaults();
+			unset( $schema['type'] );
+			foreach ( array_keys( $schema ) as $key ) {
+				$metabox->set( $key, $options[ $key ] );
 			}
 		}
 	}
 
 	/**
-	 * Register the JavaScript for the admin area.
+	 * Remove the classic metabox when the post will render in the Block Editor.
 	 *
-	 * @since 0.7.0
-	 * @since 0.8.0 Added CSS to fix the select UI styling.
+	 * Filtering at the post-type level (use_block_editor_for_post_type) misses
+	 * the Classic Editor plugin's "allow users to switch" mode, where the
+	 * post-type default is Block but individual posts may be opened in classic.
+	 * use_block_editor_for_post() respects that per-post preference.
+	 *
+	 * @since 0.8.0
+	 *
+	 * @param string       $post_type Post type slug.
+	 * @param WP_Post|null $post      Post being edited.
 	 */
-	public function enqueue_scripts() {
+	public function suppress_classic_metabox_in_block_editor( $post_type, $post ) {
 
-		/**
-		 * An instance of this class should be passed to the run() function
-		 * defined in Category_Metabox_Enhanced_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Category_Metabox_Enhanced_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		$current_screen = get_current_screen();
-		if ( method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor() ) {
-			$taxes      = of_cme_supported_taxonomies();
-			$has_select = false;
-
-			foreach ( $taxes as $key => $tax ) {
-				$options = get_option( $this->name . '_' . $tax );
-				$type    = $options['type'];
-
-				if ( 'checkbox' === $type ) {
-					unset( $taxes[ $key ] );
-				} elseif ( 'select' === $type ) {
-					$has_select = true;
-				}
-			}
-
-			if ( ! empty( $taxes ) ) {
-				wp_enqueue_script( $this->name, plugin_dir_url( __FILE__ ) . 'js/admin.js', array( 'jquery' ), $this->version, true );
-				wp_localize_script( $this->name, 'of_cme', array( 'supported_taxonomies' => wp_json_encode( $taxes ) ) );
-
-				if ( $has_select ) {
-					wp_enqueue_style( $this->name, plugin_dir_url( __FILE__ ) . 'css/admin.css', array(), $this->version, 'all' );
-				}
-			}
+		if ( ! is_object( $post ) || ! use_block_editor_for_post( $post ) ) {
+			return;
 		}
 
+		foreach ( of_cme_supported_taxonomies() as $tax ) {
+			$options = of_cme_get_taxonomy_options( $tax );
+			if ( ! of_cme_is_single_term_type( $options['type'] ) ) {
+				continue;
+			}
+			// Only suppress the classic metabox if we actually ship a sidebar
+			// replacement; non-REST taxonomies fall back to the legacy metabox.
+			$tax_obj = get_taxonomy( $tax );
+			if ( ! $tax_obj || empty( $tax_obj->show_in_rest ) ) {
+				continue;
+			}
+			remove_meta_box( $tax . '_input_element', $post_type, $options['context'] );
+		}
+	}
+
+	/**
+	 * Build the JS payload describing every supported taxonomy whose UI
+	 * should be replaced in the Block Editor sidebar.
+	 *
+	 * @since 0.8.0
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function block_editor_taxonomies() {
+		$payload = array();
+
+		foreach ( of_cme_supported_taxonomies() as $tax_slug ) {
+			$options = of_cme_get_taxonomy_options( $tax_slug );
+
+			if ( ! of_cme_is_single_term_type( $options['type'] ) ) {
+				continue;
+			}
+
+			$tax = get_taxonomy( $tax_slug );
+			if ( ! $tax || empty( $tax->show_in_rest ) ) {
+				continue;
+			}
+
+			$payload[] = array(
+				'slug'            => $tax_slug,
+				'rest_base'       => $tax->rest_base ? $tax->rest_base : $tax_slug,
+				'type'            => $options['type'],
+				'indented'        => (bool) $options['indented'],
+				'allow_new_terms' => (bool) $options['allow_new_terms'],
+				'panel_title'     => $options['metabox_title'] ? $options['metabox_title'] : $tax->labels->name,
+				'post_types'      => array_values( (array) $tax->object_type ),
+			);
+		}
+
+		return $payload;
+	}
+
+	/**
+	 * Enqueue the Block Editor sidebar panel.
+	 *
+	 * @since 0.8.0
+	 */
+	public function enqueue_block_editor_assets() {
+
+		$taxonomies = $this->block_editor_taxonomies();
+		if ( empty( $taxonomies ) ) {
+			return;
+		}
+
+		$asset_file = plugin_dir_path( dirname( __FILE__ ) ) . 'admin/js/block-editor/build/index.asset.php';
+		if ( ! file_exists( $asset_file ) ) {
+			return;
+		}
+
+		$asset = include $asset_file;
+
+		wp_enqueue_script(
+			$this->name . '-block-editor',
+			plugin_dir_url( __FILE__ ) . 'js/block-editor/build/index.js',
+			$asset['dependencies'],
+			$asset['version'],
+			true
+		);
+
+		wp_add_inline_script(
+			$this->name . '-block-editor',
+			'window.ofCmeBlockEditor = ' . wp_json_encode( array( 'taxonomies' => $taxonomies ) ) . ';',
+			'before'
+		);
 	}
 
 }

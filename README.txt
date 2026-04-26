@@ -4,12 +4,12 @@ Contributors: 1fixdotio
 Donate link: http://1fix.io/
 Tags: category, metabox, taxonomy
 Requires at least: 3.5
-Tested up to: 5.6.1
-Stable tag: 0.7.1
+Tested up to: 6.7
+Stable tag: 0.8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Replace the checkboxes with radio buttons or a select drop-down in the built-in Categories metabox and Gutenberg sidebar panel.
+Replace the checkboxes with radio buttons or a select drop-down in the built-in Categories metabox and the Block Editor sidebar panel.
 
 == Description ==
 
@@ -37,6 +37,11 @@ With Categories Metabox Enhanced, you can:
 3. A settings page for this plugin
 
 == Changelog ==
+
+= 0.8.0 =
+* Replace the legacy Block Editor integration with a native sidebar panel built on `@wordpress/components` (`TreeSelect` / radio tree) and `PluginDocumentSettingPanel`.
+* Add server-side single-term enforcement on `pre_set_object_terms` so REST and programmatic saves can't bypass the radio/select invariant.
+* The classic-editor metabox path is unchanged; it now skips post types that use the Block Editor to avoid duplicate UI.
 
 = 0.7.1 =
 * Update the Taxonomy_Single_Term library and some cosmetic fixes.

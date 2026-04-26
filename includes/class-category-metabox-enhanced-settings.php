@@ -171,6 +171,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
 			$html .= '<label title="' . $context . '"><input type="radio" name="' . $args[0] . '[context]" value="' . $context . '" ' . checked( $context, $value, false ) . '> <span>' . ucfirst( $context ) . '</span></label><br>';
 		}
 		$html .= '</fieldset>';
+		$html .= '<p class="description">' . __( 'Classic editor only. Ignored by the Block Editor sidebar panel.', 'of-cme' ) . '</p>';
 
 		echo $html;
 
@@ -198,6 +199,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
 			$html .= '<label title="' . $priority . '"><input type="radio" name="' . $args[0] . '[priority]" value="' . $priority . '" ' . checked( $priority, $value, false ) . '> <span>' . ucfirst( $priority ) . '</span></label><br>';
 		}
 		$html .= '</fieldset>';
+		$html .= '<p class="description">' . __( 'Classic editor only. Ignored by the Block Editor sidebar panel.', 'of-cme' ) . '</p>';
 
 		echo $html;
 
@@ -207,7 +209,8 @@ class Category_Metabox_Enhanced_Settings_Settings {
 
 		$value = isset( $args[1]['metabox_title'] ) ? $args[1]['metabox_title'] : '';
 
-		$html = '<input type="text" id="metabox_title" name="' . $args[0] . '[metabox_title]" value="' . $value . '" class="regular-text" />';
+		$html  = '<input type="text" id="metabox_title" name="' . $args[0] . '[metabox_title]" value="' . esc_attr( $value ) . '" class="regular-text" />';
+		$html .= '<p class="description">' . __( 'Used as the metabox title in the classic editor and the panel title in the Block Editor sidebar. Defaults to the taxonomy name.', 'of-cme' ) . '</p>';
 
 		echo $html;
 
@@ -230,7 +233,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
 
 		$html = '<label for="allow_new_terms"><input type="checkbox" id="allow_new_terms" name="' . $args[0] . '[allow_new_terms]" value="1" ' . checked( $value, 1, false ) . ' /> Yes</label>';
 		/* translators: 1. Open strong tag. 2. Close String tag. */
-		$html .= '<p class="description">' . sprintf( esc_html__( 'Check if allows adding of new terms from the metabox. %1$sIt does not work properly when the Option Type is Select.%2$s', 'of-cme' ), '<strong>', '</strong>' ) . '</p>';
+		$html .= '<p class="description">' . sprintf( esc_html__( 'Check if allows adding of new terms from the metabox. %1$sIn the classic editor, it does not work properly when the Option Type is Select.%2$s', 'of-cme' ), '<strong>', '</strong>' ) . '</p>';
 
 		echo $html;
 
