@@ -183,6 +183,12 @@ class Category_Metabox_Enhanced_Admin {
 			if ( ! of_cme_is_single_term_type( $options['type'] ) ) {
 				continue;
 			}
+			// Only suppress the classic metabox if we actually ship a sidebar
+			// replacement; non-REST taxonomies fall back to the legacy metabox.
+			$tax_obj = get_taxonomy( $tax );
+			if ( ! $tax_obj || empty( $tax_obj->show_in_rest ) ) {
+				continue;
+			}
 			remove_meta_box( $tax . '_input_element', $post_type, $options['context'] );
 		}
 	}
