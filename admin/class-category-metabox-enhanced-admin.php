@@ -132,42 +132,23 @@ class Category_Metabox_Enhanced_Admin {
 	}
 
 	/**
-	 * Customize taxonomy metaboxes for classic-editor post types.
-	 *
-	 * Block Editor post types get a native sidebar panel via JS instead.
+	 * Register the single-term metabox for every post type the taxonomy
+	 * is associated with. Whether the metabox actually renders is decided
+	 * per-post in suppress_classic_metabox_in_block_editor(), which runs
+	 * later on add_meta_boxes.
 	 *
 	 * @since 0.3.0
 	 */
 	public function customize_taxonomy_metaboxes() {
 
-		$taxes = of_cme_supported_taxonomies();
-
-		foreach ( $taxes as $tax ) {
+		foreach ( of_cme_supported_taxonomies() as $tax ) {
 			$options = of_cme_get_taxonomy_options( $tax );
 
 			if ( ! of_cme_is_single_term_type( $options['type'] ) ) {
 				continue;
 			}
 
-			$tax_obj = get_taxonomy( $tax );
-			if ( ! $tax_obj ) {
-				continue;
-			}
-
-			$classic_post_types = array_values(
-				array_filter(
-					(array) $tax_obj->object_type,
-					function ( $pt ) {
-						return ! use_block_editor_for_post_type( $pt );
-					}
-				)
-			);
-
-			if ( empty( $classic_post_types ) ) {
-				continue;
-			}
-
-			$metabox = new Taxonomy_Single_Term( $tax, $classic_post_types, $options['type'] );
+			$metabox = new Taxonomy_Single_Term( $tax, array(), $options['type'] );
 			$metabox->set( 'force_selection', true );
 
 			$schema = of_cme_get_defaults();
@@ -175,6 +156,34 @@ class Category_Metabox_Enhanced_Admin {
 			foreach ( array_keys( $schema ) as $key ) {
 				$metabox->set( $key, $options[ $key ] );
 			}
+		}
+	}
+
+	/**
+	 * Remove the classic metabox when the post will render in the Block Editor.
+	 *
+	 * Filtering at the post-type level (use_block_editor_for_post_type) misses
+	 * the Classic Editor plugin's "allow users to switch" mode, where the
+	 * post-type default is Block but individual posts may be opened in classic.
+	 * use_block_editor_for_post() respects that per-post preference.
+	 *
+	 * @since 0.8.0
+	 *
+	 * @param string       $post_type Post type slug.
+	 * @param WP_Post|null $post      Post being edited.
+	 */
+	public function suppress_classic_metabox_in_block_editor( $post_type, $post ) {
+
+		if ( ! is_object( $post ) || ! use_block_editor_for_post( $post ) ) {
+			return;
+		}
+
+		foreach ( of_cme_supported_taxonomies() as $tax ) {
+			$options = of_cme_get_taxonomy_options( $tax );
+			if ( ! of_cme_is_single_term_type( $options['type'] ) ) {
+				continue;
+			}
+			remove_meta_box( $tax . '_input_element', $post_type, $options['context'] );
 		}
 	}
 
