@@ -88,8 +88,12 @@ function TaxonomyPanelInner( { taxonomy } ) {
 	);
 
 	const canCreate = useSelect(
-		( select ) => select( 'core' ).canUser( 'create', restBase ),
-		[ restBase ]
+		( select ) =>
+			select( 'core' ).canUser( 'create', {
+				kind: 'taxonomy',
+				name: slug,
+			} ),
+		[ slug ]
 	);
 
 	const [ newTermName, setNewTermName ] = useState( '' );
