@@ -173,31 +173,46 @@ function TaxonomyPanelInner( { taxonomy } ) {
 			);
 		}
 		return (
-			<ul className="of-cme-radio-list">
-				{ flattenIndented( tree ).map( ( node ) => (
-					<li
-						key={ node.id }
-						style={ {
-							paddingLeft: indented
-								? `${ node.depth * 16 }px`
-								: 0,
-							listStyle: 'none',
-							margin: '4px 0',
-						} }
+			<Fragment>
+				<ul className="of-cme-radio-list">
+					{ flattenIndented( tree ).map( ( node ) => (
+						<li
+							key={ node.id }
+							style={ {
+								paddingLeft: indented
+									? `${ node.depth * 16 }px`
+									: 0,
+								listStyle: 'none',
+								margin: '4px 0',
+							} }
+						>
+							<label>
+								<input
+									type="radio"
+									name={ `of-cme-${ slug }` }
+									value={ node.id }
+									checked={ selectedId === node.id }
+									onChange={ () => selectTerm( node.id ) }
+								/>{ ' ' }
+								{ node.name }
+							</label>
+						</li>
+					) ) }
+				</ul>
+				{ /* Mirrors the classic editor's "Clear" affordance, which
+				   Taxonomy_Single_Term renders only when force_selection is
+				   false. Without this, the toggle has no visible effect on
+				   radio-type taxonomies in the Block Editor. */ }
+				{ ! forceSelection && selectedId && (
+					<Button
+						variant="link"
+						onClick={ () => selectTerm( '' ) }
+						style={ { marginTop: 8 } }
 					>
-						<label>
-							<input
-								type="radio"
-								name={ `of-cme-${ slug }` }
-								value={ node.id }
-								checked={ selectedId === node.id }
-								onChange={ () => selectTerm( node.id ) }
-							/>{ ' ' }
-							{ node.name }
-						</label>
-					</li>
-				) ) }
-			</ul>
+						{ __( 'Clear', 'of-cme' ) }
+					</Button>
+				) }
+			</Fragment>
 		);
 	};
 
