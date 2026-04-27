@@ -35,17 +35,24 @@ download() {
 	fi
 }
 
+# WordPress doesn't tag x.y.0 patches separately — they live under tags/x.y.
+# Normalize so both the explicit x.y.z branch and the `latest`-via-API branch
+# agree on the SVN path.
+release_tag_for() {
+	local v="$1"
+	case "$v" in
+		*.0) echo "tags/${v%.0}" ;;
+		*)   echo "tags/$v" ;;
+	esac
+}
+
 # Resolve the SVN tag the test suite ships under for the requested version.
 if [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+\-(beta|RC)[0-9]+$ ]]; then
 	WP_TESTS_TAG="branches/${WP_VERSION%-*}"
 elif [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+$ ]]; then
 	WP_TESTS_TAG="branches/$WP_VERSION"
 elif [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-	if [[ $WP_VERSION =~ \.0$ ]]; then
-		WP_TESTS_TAG="tags/${WP_VERSION%.0}"
-	else
-		WP_TESTS_TAG="tags/$WP_VERSION"
-	fi
+	WP_TESTS_TAG=$(release_tag_for "$WP_VERSION")
 elif [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
 	WP_TESTS_TAG="trunk"
 else
@@ -55,7 +62,7 @@ else
 		echo "Could not resolve latest WordPress version." >&2
 		exit 1
 	fi
-	WP_TESTS_TAG="tags/$LATEST_VERSION"
+	WP_TESTS_TAG=$(release_tag_for "$LATEST_VERSION")
 fi
 
 install_wp() {
