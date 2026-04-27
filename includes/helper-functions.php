@@ -66,65 +66,95 @@ function of_cme_is_single_term_type( $type ) {
 }
 
 /**
- * Enforce the single-term invariant for taxonomies configured as radio/select.
+ * Enforce the single-term invariant after WordPress commits term assignments.
  *
- * Two cases:
- *   - >1 terms: coerce to the last one (UI sends one, but REST/programmatic
- *     callers can still submit multiple).
- *   - 0 terms with force_selection on: substitute the first available term.
- *     This is the only place a UI-bypassing caller (REST, wp-cli) can be
- *     stopped from creating an empty assignment for a taxonomy that's
- *     configured to require one.
+ * WordPress core does not expose a pre-write filter on object terms —
+ * `wp_set_object_terms` only fires the `set_object_terms` action after the
+ * relationships are written. We hook that action, inspect the committed
+ * state, and re-issue `wp_set_object_terms` with corrected IDs when the
+ * single-term contract is violated. A static recursion guard ensures the
+ * re-issue does not trigger a second pass.
  *
- * @since 0.8.0
+ * Two cases trigger correction:
+ *   - >1 terms committed: coerce to the last (matches Taxonomy_Single_Term
+ *     classic-editor semantics).
+ *   - 0 terms committed AND force_selection on: substitute the resolved
+ *     default term, closing the bypass that REST and programmatic callers
+ *     would otherwise have on the single-term invariant.
  *
- * @param array<int|string>|string $terms     Terms being assigned.
- * @param int                      $object_id Unused.
- * @param string                   $taxonomy  Taxonomy slug.
- * @return array<int|string>|string
+ * Append-mode calls are skipped: a caller that explicitly appends should
+ * not have prior terms removed by us.
+ *
+ * Note: other listeners on `set_object_terms` see the uncorrected state
+ * briefly, then a second action fires with the correction. Anything that
+ * caches "current terms" in this action will cache wrong then re-cache.
+ * This is the trade-off for not having a pre-write hook.
+ *
+ * @since 0.9.1
+ *
+ * @param int           $object_id  Object ID receiving the terms.
+ * @param array         $terms      Terms originally passed to wp_set_object_terms.
+ * @param array         $tt_ids     Term taxonomy IDs that were set.
+ * @param string        $taxonomy   Taxonomy slug.
+ * @param bool          $append     Whether the call appended rather than replaced.
+ * @param array         $old_tt_ids Old term taxonomy IDs before the write.
  */
-function of_cme_enforce_single_term( $terms, $object_id, $taxonomy ) {
+function of_cme_enforce_single_term( $object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids ) {
 
-	if ( ! is_array( $terms ) ) {
-		return $terms;
+	static $reentering = false;
+	if ( $reentering ) {
+		return;
+	}
+
+	if ( $append ) {
+		return;
 	}
 
 	if ( ! is_taxonomy_hierarchical( $taxonomy ) ) {
-		return $terms;
+		return;
 	}
 
 	$options = of_cme_get_taxonomy_options( $taxonomy );
 	if ( ! of_cme_is_single_term_type( $options['type'] ) ) {
-		return $terms;
+		return;
 	}
 
-	// Drop the "no selection" sentinel ([0]/['0']) so it doesn't bypass the
-	// force_selection branch as a count-of-one. is_numeric gates the int
-	// cast because (int) 'my-category' is 0 in PHP, and pre_set_object_terms
-	// fires before WP resolves slugs/names to IDs.
-	$filtered = array_values(
-		array_filter(
-			$terms,
-			static function ( $term ) {
-				return ! is_numeric( $term ) || 0 !== (int) $term;
-			}
+	$current_ids = wp_get_object_terms(
+		$object_id,
+		$taxonomy,
+		array(
+			'fields'                 => 'ids',
+			'orderby'                => 'none',
+			'hide_empty'             => false,
+			'update_term_meta_cache' => false,
 		)
 	);
-
-	if ( count( $filtered ) > 1 ) {
-		return array( end( $filtered ) );
+	if ( is_wp_error( $current_ids ) ) {
+		return;
 	}
 
-	if ( count( $filtered ) === 0 && ! empty( $options['force_selection'] ) ) {
+	$count        = count( $current_ids );
+	$new_ids      = $current_ids;
+	$needs_change = false;
+
+	if ( $count > 1 ) {
+		$new_ids      = array( (int) end( $current_ids ) );
+		$needs_change = true;
+	} elseif ( 0 === $count && ! empty( $options['force_selection'] ) ) {
 		$default = of_cme_resolve_default_term( $taxonomy );
 		if ( $default ) {
-			return array( $default );
+			$new_ids      = array( $default );
+			$needs_change = true;
 		}
 	}
 
-	return $filtered;
+	if ( $needs_change ) {
+		$reentering = true;
+		wp_set_object_terms( $object_id, $new_ids, $taxonomy, false );
+		$reentering = false;
+	}
 }
-add_filter( 'pre_set_object_terms', 'of_cme_enforce_single_term', 10, 3 );
+add_action( 'set_object_terms', 'of_cme_enforce_single_term', 10, 6 );
 
 /**
  * Resolve the term to substitute for an empty force_selection submission.

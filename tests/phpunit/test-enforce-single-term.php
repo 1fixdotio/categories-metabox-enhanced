@@ -1,16 +1,20 @@
 <?php
 /**
- * Coverage for of_cme_enforce_single_term().
+ * Integration coverage for of_cme_enforce_single_term().
  *
- * Each test corresponds to a regression class identified in the PR #5 review:
- * sentinel filtering, type coercion of slug strings, force_selection
- * substitution, and multi-term coercion.
+ * The function is hooked on `set_object_terms` (post-write action), not
+ * tested in isolation, because the regression in 0.9.0 was a hook-name typo
+ * that function-level tests can't catch. Each test calls wp_set_object_terms
+ * — the integration path real callers take — and asserts the resulting term
+ * assignment.
  */
 
 class Test_Enforce_Single_Term extends WP_UnitTestCase {
 
 	const TAX        = 'cme_test_enforce';
 	const OPTION_KEY = 'category-metabox-enhanced_cme_test_enforce';
+
+	private $term_ids = array();
 
 	public function set_up() {
 		parent::set_up();
@@ -19,6 +23,13 @@ class Test_Enforce_Single_Term extends WP_UnitTestCase {
 			'type'            => 'radio',
 			'force_selection' => 1,
 		) );
+
+		// Predictable term set for substitution + multi-term tests.
+		$this->term_ids = array(
+			'alpha' => self::factory()->term->create( array( 'taxonomy' => self::TAX, 'name' => 'Alpha', 'slug' => 'alpha' ) ),
+			'beta'  => self::factory()->term->create( array( 'taxonomy' => self::TAX, 'name' => 'Beta',  'slug' => 'beta'  ) ),
+			'gamma' => self::factory()->term->create( array( 'taxonomy' => self::TAX, 'name' => 'Gamma', 'slug' => 'gamma' ) ),
+		);
 	}
 
 	public function tear_down() {
@@ -29,82 +40,60 @@ class Test_Enforce_Single_Term extends WP_UnitTestCase {
 		parent::tear_down();
 	}
 
+	private function create_post() {
+		return self::factory()->post->create( array( 'post_status' => 'publish' ) );
+	}
+
+	private function get_post_term_ids( $post_id ) {
+		return wp_get_object_terms( $post_id, self::TAX, array( 'fields' => 'ids', 'orderby' => 'term_id' ) );
+	}
+
 	/**
-	 * Helper: create a term in the test taxonomy and pin it as the
-	 * legacy default so force_selection resolves deterministically.
+	 * Meta-test — proves the action is wired to `set_object_terms` so a
+	 * future hook-name typo (the 0.9.0 regression) breaks the suite.
 	 */
-	private function pin_default_term() {
-		$term_id = self::factory()->term->create(
-			array(
-				'taxonomy' => self::TAX,
-				'name'     => 'Pinned',
-				'slug'     => 'pinned',
-			)
-		);
-		update_option( 'default_' . self::TAX, $term_id );
-		return $term_id;
-	}
-
-	public function test_non_array_input_passes_through() {
-		$this->assertSame( 'foo', of_cme_enforce_single_term( 'foo', 0, self::TAX ) );
-		$this->assertSame( 42, of_cme_enforce_single_term( 42, 0, self::TAX ) );
-		$this->assertNull( of_cme_enforce_single_term( null, 0, self::TAX ) );
-	}
-
-	public function test_non_hierarchical_taxonomy_passes_through() {
-		// post_tag is non-hierarchical and ships with WordPress, so we can
-		// assert the early return without registering anything custom.
-		$input = array( 10, 20, 30 );
-		$this->assertSame( $input, of_cme_enforce_single_term( $input, 0, 'post_tag' ) );
-	}
-
-	public function test_checkbox_type_passes_through() {
-		update_option( self::OPTION_KEY, array( 'type' => 'checkbox' ) );
-
-		$input = array( 10, 20, 30 );
-		$this->assertSame( $input, of_cme_enforce_single_term( $input, 0, self::TAX ) );
-	}
-
-	public function test_single_valid_id_passes_through() {
-		$this->assertSame( array( 42 ), of_cme_enforce_single_term( array( 42 ), 0, self::TAX ) );
-	}
-
-	public function test_multiple_ids_coerced_to_last() {
-		$this->assertSame( array( 30 ), of_cme_enforce_single_term( array( 10, 20, 30 ), 0, self::TAX ) );
-	}
-
-	public function test_zero_int_filtered_triggers_force_selection() {
-		$default = $this->pin_default_term();
-
-		$this->assertSame( array( $default ), of_cme_enforce_single_term( array( 0 ), 0, self::TAX ) );
-	}
-
-	public function test_zero_string_filtered_triggers_force_selection() {
-		$default = $this->pin_default_term();
-
-		$this->assertSame( array( $default ), of_cme_enforce_single_term( array( '0' ), 0, self::TAX ) );
-	}
-
-	public function test_slug_string_preserved() {
-		// Regression for the `(int) 'slug' === 0` bug: pre_set_object_terms
-		// fires before WP resolves slugs to IDs, so a slug like 'my-category'
-		// must survive the sentinel filter.
-		$this->assertSame(
-			array( 'my-category' ),
-			of_cme_enforce_single_term( array( 'my-category' ), 0, self::TAX )
+	public function test_action_is_registered_on_set_object_terms() {
+		$this->assertNotFalse(
+			has_action( 'set_object_terms', 'of_cme_enforce_single_term' ),
+			'of_cme_enforce_single_term must be hooked on set_object_terms; that hook is the only post-write integration point WP exposes for term assignments.'
 		);
 	}
 
-	public function test_mixed_id_and_zero_filters_zero() {
-		// [5, 0] should drop the sentinel and pass the surviving single ID
-		// through without triggering substitution.
-		$this->assertSame( array( 5 ), of_cme_enforce_single_term( array( 5, 0 ), 0, self::TAX ) );
+	public function test_single_term_passes_through() {
+		$post_id = $this->create_post();
+		wp_set_object_terms( $post_id, array( $this->term_ids['beta'] ), self::TAX );
+
+		$this->assertSame( array( $this->term_ids['beta'] ), $this->get_post_term_ids( $post_id ) );
+	}
+
+	public function test_multiple_terms_coerced_to_last() {
+		$post_id = $this->create_post();
+		wp_set_object_terms(
+			$post_id,
+			array( $this->term_ids['alpha'], $this->term_ids['beta'], $this->term_ids['gamma'] ),
+			self::TAX
+		);
+
+		$this->assertSame( array( $this->term_ids['gamma'] ), $this->get_post_term_ids( $post_id ) );
 	}
 
 	public function test_empty_with_force_selection_substitutes_default() {
-		$default = $this->pin_default_term();
+		// Alpha is alphabetically first — falls through to the resolver's
+		// first-by-name path when no default option is set.
+		$post_id = $this->create_post();
+		wp_set_object_terms( $post_id, array(), self::TAX );
 
-		$this->assertSame( array( $default ), of_cme_enforce_single_term( array(), 0, self::TAX ) );
+		$this->assertSame( array( $this->term_ids['alpha'] ), $this->get_post_term_ids( $post_id ) );
+	}
+
+	public function test_zero_sentinel_with_force_selection_substitutes_default() {
+		// [0] reaches wp_set_object_terms which drops it during term resolution
+		// (term_exists(0) returns null, is_int(0) skip branch). Net committed
+		// state is empty, so our action substitutes the default.
+		$post_id = $this->create_post();
+		wp_set_object_terms( $post_id, array( 0 ), self::TAX );
+
+		$this->assertSame( array( $this->term_ids['alpha'] ), $this->get_post_term_ids( $post_id ) );
 	}
 
 	public function test_empty_without_force_selection_passes_through() {
@@ -113,6 +102,62 @@ class Test_Enforce_Single_Term extends WP_UnitTestCase {
 			'force_selection' => 0,
 		) );
 
-		$this->assertSame( array(), of_cme_enforce_single_term( array(), 0, self::TAX ) );
+		$post_id = $this->create_post();
+		wp_set_object_terms( $post_id, array(), self::TAX );
+
+		$this->assertSame( array(), $this->get_post_term_ids( $post_id ) );
+	}
+
+	public function test_pinned_default_term_wins_over_first_by_name() {
+		update_option( 'default_' . self::TAX, $this->term_ids['gamma'] );
+
+		$post_id = $this->create_post();
+		wp_set_object_terms( $post_id, array(), self::TAX );
+
+		$this->assertSame( array( $this->term_ids['gamma'] ), $this->get_post_term_ids( $post_id ) );
+	}
+
+	public function test_checkbox_type_is_not_coerced() {
+		update_option( self::OPTION_KEY, array( 'type' => 'checkbox' ) );
+
+		$post_id = $this->create_post();
+		wp_set_object_terms(
+			$post_id,
+			array( $this->term_ids['alpha'], $this->term_ids['beta'] ),
+			self::TAX
+		);
+
+		$this->assertEqualsCanonicalizing(
+			array( $this->term_ids['alpha'], $this->term_ids['beta'] ),
+			$this->get_post_term_ids( $post_id )
+		);
+	}
+
+	public function test_non_hierarchical_taxonomy_is_not_coerced() {
+		// post_tag ships non-hierarchical, so we can verify the early return
+		// without registering yet another taxonomy.
+		$post_id = $this->create_post();
+		$tag1    = self::factory()->term->create( array( 'taxonomy' => 'post_tag', 'name' => 'one' ) );
+		$tag2    = self::factory()->term->create( array( 'taxonomy' => 'post_tag', 'name' => 'two' ) );
+
+		wp_set_object_terms( $post_id, array( $tag1, $tag2 ), 'post_tag' );
+
+		$this->assertEqualsCanonicalizing(
+			array( $tag1, $tag2 ),
+			wp_get_object_terms( $post_id, 'post_tag', array( 'fields' => 'ids' ) )
+		);
+	}
+
+	public function test_append_mode_is_not_coerced() {
+		// Append mode is the one path that intentionally adds to the existing
+		// set; coercing would surprise callers like wp_add_object_terms.
+		$post_id = $this->create_post();
+		wp_set_object_terms( $post_id, array( $this->term_ids['alpha'] ), self::TAX );
+		wp_set_object_terms( $post_id, array( $this->term_ids['beta'] ), self::TAX, true );
+
+		$this->assertEqualsCanonicalizing(
+			array( $this->term_ids['alpha'], $this->term_ids['beta'] ),
+			$this->get_post_term_ids( $post_id )
+		);
 	}
 }
