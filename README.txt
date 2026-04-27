@@ -3,7 +3,7 @@
 Contributors: 1fixdotio
 Donate link: http://1fix.io/
 Tags: category, metabox, taxonomy
-Requires at least: 3.5
+Requires at least: 5.5
 Tested up to: 6.7
 Stable tag: 0.9.0
 License: GPLv2 or later

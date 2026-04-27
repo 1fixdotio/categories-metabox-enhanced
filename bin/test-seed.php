@@ -10,6 +10,12 @@
 defined( 'ABSPATH' ) || exit;
 
 add_action( 'init', function () {
+	// Skip during WP test-suite install/runs — the seed assumes the front-end
+	// schema, which the test bootstrap creates with a different table prefix.
+	if ( wp_installing() || defined( 'WP_TESTS_DOMAIN' ) ) {
+		return;
+	}
+
 	if ( get_option( 'cme_test_seeded' ) ) {
 		return;
 	}

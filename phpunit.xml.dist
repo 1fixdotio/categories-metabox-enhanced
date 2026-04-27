@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    bootstrap="tests/phpunit/bootstrap.php"
+    backupGlobals="false"
+    colors="true"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true"
+    beStrictAboutTestsThatDoNotTestAnything="true"
+    cacheResultFile=".phpunit.result.cache"
+>
+    <testsuites>
+        <testsuite name="plugin">
+            <directory suffix=".php">tests/phpunit</directory>
+            <exclude>tests/phpunit/bootstrap.php</exclude>
+        </testsuite>
+    </testsuites>
+</phpunit>

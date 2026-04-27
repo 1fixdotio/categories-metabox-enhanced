@@ -1,0 +1,64 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+      - master
+
+jobs:
+  phpunit:
+    name: PHPUnit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Start wp-env
+        run: npm run env:start
+
+      - name: Run PHPUnit
+        run: npm run test:phpunit
+
+      - name: Stop wp-env
+        if: always()
+        run: npm run env:stop || true
+
+  build-freshness:
+    name: Build freshness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build block editor assets
+        run: npm run build
+
+      - name: Verify committed build is up to date
+        run: git diff --exit-code -- admin/js/block-editor/build/
