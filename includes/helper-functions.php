@@ -122,6 +122,57 @@ function of_cme_enforce_single_term( $terms, $object_id, $taxonomy ) {
 	}
 
 	if ( count( $filtered ) === 0 && ! empty( $options['force_selection'] ) ) {
+		$default = of_cme_resolve_default_term( $taxonomy );
+		if ( $default ) {
+			return array( $default );
+		}
+	}
+
+	return $filtered;
+}
+add_filter( 'pre_set_object_terms', 'of_cme_enforce_single_term', 10, 3 );
+
+/**
+ * Resolve the term to substitute for an empty force_selection submission.
+ *
+ * Mirrors how the classic Taxonomy_Single_Term library picks its pre-checked
+ * default (process_default → get_option('default_<slug>')) and honors the
+ * 'default_term' arg passed to register_taxonomy (WP_Taxonomy::default_term,
+ * WP 5.5+). Falls back to the first term by name asc if neither is set, so
+ * custom hierarchical taxonomies that haven't configured a default still
+ * end up with a real term.
+ *
+ * Filterable via 'of_cme_force_selection_default_term' so site owners can
+ * override per-taxonomy without touching this code.
+ *
+ * @since 0.9.0
+ *
+ * @param string $taxonomy Taxonomy slug.
+ * @return int Term ID, or 0 if no terms exist for the taxonomy.
+ */
+function of_cme_resolve_default_term( $taxonomy ) {
+
+	$tax_obj = get_taxonomy( $taxonomy );
+	$default = 0;
+
+	$option = get_option( 'default_' . $taxonomy );
+	if ( $option ) {
+		$default = (int) $option;
+	}
+
+	if ( ! $default && $tax_obj && ! empty( $tax_obj->default_term ) ) {
+		$slug = is_array( $tax_obj->default_term )
+			? ( isset( $tax_obj->default_term['slug'] ) ? $tax_obj->default_term['slug'] : '' )
+			: $tax_obj->default_term;
+		if ( $slug ) {
+			$term = get_term_by( 'slug', $slug, $taxonomy );
+			if ( $term instanceof WP_Term ) {
+				$default = (int) $term->term_id;
+			}
+		}
+	}
+
+	if ( ! $default ) {
 		$first = get_terms(
 			array(
 				'taxonomy'   => $taxonomy,
@@ -133,10 +184,9 @@ function of_cme_enforce_single_term( $terms, $object_id, $taxonomy ) {
 			)
 		);
 		if ( ! is_wp_error( $first ) && ! empty( $first ) ) {
-			return array( (int) $first[0] );
+			$default = (int) $first[0];
 		}
 	}
 
-	return $filtered;
+	return (int) apply_filters( 'of_cme_force_selection_default_term', $default, $taxonomy );
 }
-add_filter( 'pre_set_object_terms', 'of_cme_enforce_single_term', 10, 3 );
