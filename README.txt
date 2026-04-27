@@ -24,6 +24,9 @@ With Categories Metabox Enhanced, you can:
  * Title of the metabox.
  * If child-terms should be indenting.
  * If adding of new terms from the metabox is enable.
+ * If a term selection is required (Force selection). When on, the classic metabox hides the "None" option, the Block Editor sidebar drops the "— Select —" entry once a term is chosen, and an empty save is substituted with a default term server-side so REST and programmatic callers can't bypass it.
+
+The substituted default term resolves in this order: the `default_<taxonomy>` option (e.g. `default_category`) → the `default_term_<taxonomy>` option populated by `register_taxonomy()` `default_term` arg (WP 5.5+) → the first term ordered by name. Override per taxonomy with the `of_cme_force_selection_default_term` filter.
 
 == Installation ==
 
