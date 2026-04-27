@@ -11,36 +11,38 @@ jobs:
   phpunit:
     name: PHPUnit
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
           tools: composer
-
-      - name: Install npm dependencies
-        run: npm ci
+          coverage: none
 
       - name: Install Composer dependencies
-        run: composer install --no-interaction --no-progress --prefer-dist
+        uses: ramsey/composer-install@v3
 
-      - name: Start wp-env
-        run: npm run env:start
+      - name: Install WordPress test suite
+        run: bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 latest
 
       - name: Run PHPUnit
-        run: npm run test:phpunit
-
-      - name: Stop wp-env
-        if: always()
-        run: npm run env:stop || true
+        run: vendor/bin/phpunit
 
   build-freshness:
     name: Build freshness

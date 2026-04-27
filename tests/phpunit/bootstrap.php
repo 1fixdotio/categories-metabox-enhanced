@@ -2,22 +2,20 @@
 /**
  * PHPUnit bootstrap.
  *
- * Loads the WP test suite shipped by wp-phpunit and registers this plugin
- * before WordPress finishes booting so its hooks are in place when tests run.
+ * Loads the WordPress test suite installed by bin/install-wp-tests.sh and
+ * registers this plugin before WordPress finishes booting so its hooks are
+ * in place when tests run.
  */
 
-$_tests_dir = getenv( 'WP_PHPUNIT__DIR' );
+$_tests_dir = getenv( 'WP_TESTS_DIR' );
 if ( ! $_tests_dir ) {
-	$_tests_dir = dirname( __DIR__, 2 ) . '/vendor/wp-phpunit/wp-phpunit';
+	$_tests_dir = '/tmp/wordpress-tests-lib';
 }
 
 if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
-	fwrite( STDERR, "Could not find wp-phpunit at {$_tests_dir}. Run `composer install`." . PHP_EOL );
+	fwrite( STDERR, "Could not find the WordPress test suite at {$_tests_dir}." . PHP_EOL );
+	fwrite( STDERR, "Run bin/install-wp-tests.sh, or set WP_TESTS_DIR to an existing install." . PHP_EOL );
 	exit( 1 );
-}
-
-if ( ! defined( 'WP_TESTS_CONFIG_FILE_PATH' ) ) {
-	define( 'WP_TESTS_CONFIG_FILE_PATH', dirname( __DIR__, 2 ) . '/wp-tests-config.php' );
 }
 
 require_once $_tests_dir . '/includes/functions.php';

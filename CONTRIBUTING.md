@@ -2,27 +2,36 @@
 
 ## Local development environment
 
+The plugin is shipped with a `@wordpress/env` config so you can spin up a real WordPress site for manual smoke testing and (in PR C) Playwright e2e:
+
 ```sh
 npm install
+npm run env:start   # http://localhost:8888
+```
+
+If you prefer DDEV, Local, or another local stack, you can mount this directory as a plugin into your existing WordPress install — nothing in the plugin assumes wp-env at runtime.
+
+## Running PHPUnit
+
+PHPUnit runs as a regular PHP process against a MySQL the script can write to. The `bin/install-wp-tests.sh` helper downloads the WordPress test suite from `develop.svn.wordpress.org` into `/tmp/wordpress-tests-lib` and creates a fresh test database.
+
+One-time setup:
+
+```sh
 composer install
-npm run env:start
+bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 latest
 ```
 
-`npm run env:start` boots two WordPress sites via `@wordpress/env`: `dev` (port 8888) and `tests` (port 8889). The `tests` site is what PHPUnit talks to.
-
-## Running tests
-
-PHPUnit runs inside the `tests-cli` container so it shares the test database that wp-env provisions:
+Then:
 
 ```sh
-npm run test:phpunit
+composer test          # or: vendor/bin/phpunit
+npm run test:phpunit   # alias
 ```
 
-To target a single test file:
+Re-running `bin/install-wp-tests.sh` is idempotent — it skips re-downloading the suite if `/tmp/wordpress-tests-lib` already exists, but does drop and recreate the test database to keep runs deterministic.
 
-```sh
-npm run test:phpunit -- tests/phpunit/test-plugin-loaded.php
-```
+Inside DDEV the same script works — pass DDEV's MySQL credentials (`db`, `db`, `db`, `db`) and run from inside `ddev exec`.
 
 ## Building block editor assets
 
