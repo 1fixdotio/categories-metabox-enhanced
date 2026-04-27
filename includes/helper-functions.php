@@ -98,16 +98,10 @@ function of_cme_enforce_single_term( $terms, $object_id, $taxonomy ) {
 		return $terms;
 	}
 
-	// Drop the "no selection" sentinel before counting. The classic library's
-	// Clear affordance submits ['0'] (Taxonomy_Single_Term renders a hidden
-	// value=0 radio) and REST/programmatic callers can do the same. Term ID 0
-	// is never a real term, so filtering preemptively keeps the >1 / 0 / 1
-	// branches below honest — without this, [0] sailed through as count==1
-	// and bypassed the force_selection substitution.
-	//
-	// Gate on is_numeric so slug-based callers (wp_set_object_terms accepts
-	// term names/slugs as strings, and this filter fires before WP resolves
-	// them to IDs) aren't silently dropped — (int) 'my-category' is 0 in PHP.
+	// Drop the "no selection" sentinel ([0]/['0']) so it doesn't bypass the
+	// force_selection branch as a count-of-one. is_numeric gates the int
+	// cast because (int) 'my-category' is 0 in PHP, and pre_set_object_terms
+	// fires before WP resolves slugs/names to IDs.
 	$filtered = array_values(
 		array_filter(
 			$terms,
@@ -135,15 +129,13 @@ add_filter( 'pre_set_object_terms', 'of_cme_enforce_single_term', 10, 3 );
 /**
  * Resolve the term to substitute for an empty force_selection submission.
  *
- * Mirrors how the classic Taxonomy_Single_Term library picks its pre-checked
- * default (process_default → get_option('default_<slug>')) and honors the
- * 'default_term' arg passed to register_taxonomy (WP_Taxonomy::default_term,
- * WP 5.5+). Falls back to the first term by name asc if neither is set, so
- * custom hierarchical taxonomies that haven't configured a default still
- * end up with a real term.
+ * Resolution order:
+ *   1. default_<tax> option (legacy; populated for built-in `category`).
+ *   2. default_term_<tax> option (WP 5.5+ register_taxonomy `default_term`).
+ *   3. WP_Taxonomy::default_term slug lookup.
+ *   4. First term by name asc.
  *
- * Filterable via 'of_cme_force_selection_default_term' so site owners can
- * override per-taxonomy without touching this code.
+ * Filterable via 'of_cme_force_selection_default_term'.
  *
  * @since 0.9.0
  *
@@ -155,16 +147,8 @@ function of_cme_resolve_default_term( $taxonomy ) {
 	$tax_obj = get_taxonomy( $taxonomy );
 	$default = 0;
 
-	// Verify the option still points at a live term — stale IDs from deleted
-	// terms would let wp_set_object_terms drop the assignment silently and
-	// break the force_selection invariant we're trying to uphold.
-	//
-	// 'default_<tax>' is the legacy key (still used for the built-in
-	// `category` taxonomy via the default_category option). WP 5.5+ stores
-	// the auto-created default term for taxonomies registered with the
-	// 'default_term' arg under 'default_term_<tax>' via
-	// _wp_register_default_term(). Both keys can coexist; check the legacy
-	// one first for backward compat.
+	// term_exists guards against stale option IDs — wp_set_object_terms
+	// silently drops nonexistent terms, which would defeat force_selection.
 	foreach ( array( 'default_' . $taxonomy, 'default_term_' . $taxonomy ) as $option_key ) {
 		$option_id = (int) get_option( $option_key );
 		if ( $option_id && term_exists( $option_id, $taxonomy ) ) {
