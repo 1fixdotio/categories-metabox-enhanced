@@ -98,11 +98,26 @@ function of_cme_enforce_single_term( $terms, $object_id, $taxonomy ) {
 		return $terms;
 	}
 
-	if ( count( $terms ) > 1 ) {
-		return array( end( $terms ) );
+	// Drop the "no selection" sentinel before counting. The classic library's
+	// Clear affordance submits ['0'] (Taxonomy_Single_Term renders a hidden
+	// value=0 radio) and REST/programmatic callers can do the same. Term ID 0
+	// is never a real term, so filtering preemptively keeps the >1 / 0 / 1
+	// branches below honest — without this, [0] sailed through as count==1
+	// and bypassed the force_selection substitution.
+	$filtered = array_values(
+		array_filter(
+			$terms,
+			static function ( $term ) {
+				return 0 !== (int) $term;
+			}
+		)
+	);
+
+	if ( count( $filtered ) > 1 ) {
+		return array( end( $filtered ) );
 	}
 
-	if ( count( $terms ) === 0 && ! empty( $options['force_selection'] ) ) {
+	if ( count( $filtered ) === 0 && ! empty( $options['force_selection'] ) ) {
 		$first = get_terms(
 			array(
 				'taxonomy'   => $taxonomy,
@@ -118,6 +133,6 @@ function of_cme_enforce_single_term( $terms, $object_id, $taxonomy ) {
 		}
 	}
 
-	return $terms;
+	return $filtered;
 }
 add_filter( 'pre_set_object_terms', 'of_cme_enforce_single_term', 10, 3 );
