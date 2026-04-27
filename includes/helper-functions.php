@@ -158,9 +158,19 @@ function of_cme_resolve_default_term( $taxonomy ) {
 	// Verify the option still points at a live term — stale IDs from deleted
 	// terms would let wp_set_object_terms drop the assignment silently and
 	// break the force_selection invariant we're trying to uphold.
-	$option = (int) get_option( 'default_' . $taxonomy );
-	if ( $option && term_exists( $option, $taxonomy ) ) {
-		$default = $option;
+	//
+	// 'default_<tax>' is the legacy key (still used for the built-in
+	// `category` taxonomy via the default_category option). WP 5.5+ stores
+	// the auto-created default term for taxonomies registered with the
+	// 'default_term' arg under 'default_term_<tax>' via
+	// _wp_register_default_term(). Both keys can coexist; check the legacy
+	// one first for backward compat.
+	foreach ( array( 'default_' . $taxonomy, 'default_term_' . $taxonomy ) as $option_key ) {
+		$option_id = (int) get_option( $option_key );
+		if ( $option_id && term_exists( $option_id, $taxonomy ) ) {
+			$default = $option_id;
+			break;
+		}
 	}
 
 	if ( ! $default && $tax_obj && ! empty( $tax_obj->default_term ) ) {
