@@ -155,9 +155,12 @@ function of_cme_resolve_default_term( $taxonomy ) {
 	$tax_obj = get_taxonomy( $taxonomy );
 	$default = 0;
 
-	$option = get_option( 'default_' . $taxonomy );
-	if ( $option ) {
-		$default = (int) $option;
+	// Verify the option still points at a live term — stale IDs from deleted
+	// terms would let wp_set_object_terms drop the assignment silently and
+	// break the force_selection invariant we're trying to uphold.
+	$option = (int) get_option( 'default_' . $taxonomy );
+	if ( $option && term_exists( $option, $taxonomy ) ) {
+		$default = $option;
 	}
 
 	if ( ! $default && $tax_obj && ! empty( $tax_obj->default_term ) ) {
