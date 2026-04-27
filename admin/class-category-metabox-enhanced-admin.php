@@ -149,7 +149,6 @@ class Category_Metabox_Enhanced_Admin {
 			}
 
 			$metabox = new Taxonomy_Single_Term( $tax, array(), $options['type'] );
-			$metabox->set( 'force_selection', true );
 
 			$schema = of_cme_get_defaults();
 			unset( $schema['type'] );
@@ -221,6 +220,7 @@ class Category_Metabox_Enhanced_Admin {
 				'type'            => $options['type'],
 				'indented'        => (bool) $options['indented'],
 				'allow_new_terms' => (bool) $options['allow_new_terms'],
+				'force_selection' => (bool) $options['force_selection'],
 				'panel_title'     => $options['metabox_title'] ? $options['metabox_title'] : $tax->labels->name,
 				'post_types'      => array_values( (array) $tax->object_type ),
 			);

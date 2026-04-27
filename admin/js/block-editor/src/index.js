@@ -68,6 +68,7 @@ function TaxonomyPanelInner( { taxonomy } ) {
 		type,
 		indented,
 		allow_new_terms: allowNewTerms,
+		force_selection: forceSelection,
 		panel_title: panelTitle,
 	} = taxonomy;
 
@@ -154,10 +155,17 @@ function TaxonomyPanelInner( { taxonomy } ) {
 			return <p>{ __( 'No terms found.', 'of-cme' ) }</p>;
 		}
 		if ( type === 'select' ) {
+			// With force_selection on, suppress the "— Select —" option once a
+			// term has been picked so the user can't deselect back to empty.
+			// Initial empty state still shows it; the server-side filter
+			// substitutes the first term if the post is saved with none.
+			const showNoOption = ! forceSelection || ! selectedId;
 			return (
 				<TreeSelect
 					label=""
-					noOptionLabel={ __( '— Select —', 'of-cme' ) }
+					noOptionLabel={
+						showNoOption ? __( '— Select —', 'of-cme' ) : undefined
+					}
 					tree={ tree }
 					selectedId={ selectedId }
 					onChange={ selectTerm }
@@ -165,31 +173,47 @@ function TaxonomyPanelInner( { taxonomy } ) {
 			);
 		}
 		return (
-			<ul className="of-cme-radio-list">
-				{ flattenIndented( tree ).map( ( node ) => (
-					<li
-						key={ node.id }
-						style={ {
-							paddingLeft: indented
-								? `${ node.depth * 16 }px`
-								: 0,
-							listStyle: 'none',
-							margin: '4px 0',
-						} }
+			<Fragment>
+				<ul className="of-cme-radio-list">
+					{ flattenIndented( tree ).map( ( node ) => (
+						<li
+							key={ node.id }
+							style={ {
+								paddingLeft: indented
+									? `${ node.depth * 16 }px`
+									: 0,
+								listStyle: 'none',
+								margin: '4px 0',
+							} }
+						>
+							<label>
+								<input
+									type="radio"
+									name={ `of-cme-${ slug }` }
+									value={ node.id }
+									checked={ selectedId === node.id }
+									onChange={ () => selectTerm( node.id ) }
+								/>{ ' ' }
+								{ node.name }
+							</label>
+						</li>
+					) ) }
+				</ul>
+				{ /* Provides a Clear affordance equivalent to the classic
+				   editor's. The bundled Taxonomy_Single_Term library renders
+				   its Clear button unconditionally — a known cosmetic quirk
+				   when force_selection is on — so we render the stricter
+				   correct behavior here, gated on the user-facing setting. */ }
+				{ ! forceSelection && selectedId && (
+					<Button
+						variant="link"
+						onClick={ () => selectTerm( '' ) }
+						style={ { marginTop: 8 } }
 					>
-						<label>
-							<input
-								type="radio"
-								name={ `of-cme-${ slug }` }
-								value={ node.id }
-								checked={ selectedId === node.id }
-								onChange={ () => selectTerm( node.id ) }
-							/>{ ' ' }
-							{ node.name }
-						</label>
-					</li>
-				) ) }
-			</ul>
+						{ __( 'Clear', 'of-cme' ) }
+					</Button>
+				) }
+			</Fragment>
 		);
 	};
 

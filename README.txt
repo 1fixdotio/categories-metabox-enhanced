@@ -5,7 +5,7 @@ Donate link: http://1fix.io/
 Tags: category, metabox, taxonomy
 Requires at least: 3.5
 Tested up to: 6.7
-Stable tag: 0.8.0
+Stable tag: 0.9.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,10 @@ With Categories Metabox Enhanced, you can:
 3. A settings page for this plugin
 
 == Changelog ==
+
+= 0.9.0 =
+* Add a "Force selection" per-taxonomy setting (defaults on) replacing the previously hardcoded classic-editor behavior. When on, the Block Editor sidebar suppresses "— Select —" once a term is chosen, and the server-side `pre_set_object_terms` filter substitutes a default term for empty submissions on radio/select taxonomies — closing the bypass that REST and programmatic callers had on the single-term invariant.
+* The substituted term resolves in this order: `default_<taxonomy>` option → `default_term` registered with the taxonomy (WP 5.5+) → first term by name asc. Filterable via `of_cme_force_selection_default_term`. Mirrors the classic library's `process_default()` pattern.
 
 = 0.8.0 =
 * Replace the legacy Block Editor integration with a native sidebar panel built on `@wordpress/components` (`TreeSelect` / radio tree) and `PluginDocumentSettingPanel`.
