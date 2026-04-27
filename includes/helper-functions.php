@@ -104,11 +104,15 @@ function of_cme_enforce_single_term( $terms, $object_id, $taxonomy ) {
 	// is never a real term, so filtering preemptively keeps the >1 / 0 / 1
 	// branches below honest — without this, [0] sailed through as count==1
 	// and bypassed the force_selection substitution.
+	//
+	// Gate on is_numeric so slug-based callers (wp_set_object_terms accepts
+	// term names/slugs as strings, and this filter fires before WP resolves
+	// them to IDs) aren't silently dropped — (int) 'my-category' is 0 in PHP.
 	$filtered = array_values(
 		array_filter(
 			$terms,
 			static function ( $term ) {
-				return 0 !== (int) $term;
+				return ! is_numeric( $term ) || 0 !== (int) $term;
 			}
 		)
 	);
