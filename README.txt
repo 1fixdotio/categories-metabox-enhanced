@@ -5,7 +5,7 @@ Donate link: http://1fix.io/
 Tags: category, metabox, taxonomy
 Requires at least: 5.5
 Tested up to: 6.7
-Stable tag: 0.9.0
+Stable tag: 0.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,13 +41,16 @@ The substituted default term resolves in this order: the `default_<taxonomy>` op
 
 == Changelog ==
 
+= 0.9.1 =
+* Fix server-side single-term enforcement, which was registered against `pre_set_object_terms` — a hook that does not exist in WordPress core — and never executed in 0.9.0. The handler now hooks `set_object_terms` and re-issues `wp_set_object_terms` with a corrected list when the single-term contract is violated, so REST and programmatic callers are now actually enforced. The classic-editor metabox path was unaffected; it relies on UI-level enforcement.
+
 = 0.9.0 =
-* Add a "Force selection" per-taxonomy setting (defaults on) replacing the previously hardcoded classic-editor behavior. When on, the Block Editor sidebar suppresses "— Select —" once a term is chosen, and the server-side `pre_set_object_terms` filter substitutes a default term for empty submissions on radio/select taxonomies — closing the bypass that REST and programmatic callers had on the single-term invariant.
+* Add a "Force selection" per-taxonomy setting (defaults on) replacing the previously hardcoded classic-editor behavior. When on, the Block Editor sidebar suppresses "— Select —" once a term is chosen, and the server-side handler substitutes a default term for empty submissions on radio/select taxonomies — closing the bypass that REST and programmatic callers had on the single-term invariant. (The 0.9.0 release wired this handler against the wrong hook name; see 0.9.1.)
 * The substituted term resolves in this order: `default_<taxonomy>` option → `default_term` registered with the taxonomy (WP 5.5+) → first term by name asc. Filterable via `of_cme_force_selection_default_term`. Mirrors the classic library's `process_default()` pattern.
 
 = 0.8.0 =
 * Replace the legacy Block Editor integration with a native sidebar panel built on `@wordpress/components` (`TreeSelect` / radio tree) and `PluginDocumentSettingPanel`.
-* Add server-side single-term enforcement on `pre_set_object_terms` so REST and programmatic saves can't bypass the radio/select invariant.
+* Add server-side single-term enforcement so REST and programmatic saves can't bypass the radio/select invariant. (Released against the wrong hook name; superseded by 0.9.1.)
 * The classic-editor metabox path is unchanged; it now skips post types that use the Block Editor to avoid duplicate UI.
 
 = 0.7.1 =

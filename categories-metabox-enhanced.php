@@ -15,7 +15,7 @@
  * Plugin Name:       Categories Metabox Enhanced
  * Plugin URI:        https://1fix.io/category-metabox-enhanced/
  * Description:       Replace the checkboxes with radio buttons or a select drop-down in the built-in Categories metabox and the Block Editor sidebar panel.
- * Version:           0.9.0
+ * Version:           0.9.1
  * Requires at least: 5.5
  * Author:            1Fix.io
  * Author URI:        https://1fix.io/
