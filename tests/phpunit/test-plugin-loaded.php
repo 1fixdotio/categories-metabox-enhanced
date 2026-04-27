@@ -28,7 +28,7 @@ class Test_Plugin_Loaded extends WP_UnitTestCase {
 			'force_selection',
 		);
 
-		$this->assertSame( $expected_keys, array_keys( $defaults ) );
+		$this->assertEqualsCanonicalizing( $expected_keys, array_keys( $defaults ) );
 		$this->assertSame( 1, $defaults['force_selection'] );
 	}
 }

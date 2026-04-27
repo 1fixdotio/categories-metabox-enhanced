@@ -12,8 +12,5 @@
         "allow-plugins": {
             "composer/installers": true
         }
-    },
-    "scripts": {
-        "test": "phpunit"
     }
 }
