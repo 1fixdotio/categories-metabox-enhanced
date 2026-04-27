@@ -13,25 +13,36 @@ If you prefer DDEV, Local, or another local stack, you can mount this directory 
 
 ## Running PHPUnit
 
-PHPUnit runs as a regular PHP process against a MySQL the script can write to. The `bin/install-wp-tests.sh` helper downloads the WordPress test suite from `develop.svn.wordpress.org` into `/tmp/wordpress-tests-lib` and creates a fresh test database.
+PHPUnit runs as a regular PHP process against any MySQL/MariaDB the script can reach. The `bin/install-wp-tests.sh` helper downloads the WordPress test suite from `develop.svn.wordpress.org` into `/tmp/wordpress-tests-lib` and creates a fresh test database.
 
-One-time setup:
+The script signature is:
+
+```text
+bin/install-wp-tests.sh <db-name> <db-user> <db-pass> [db-host] [wp-version] [skip-database-creation]
+```
+
+Pick the credentials that match your local DB. A few common cases:
 
 ```sh
-composer install
+# Local MySQL/MariaDB with root/root (Homebrew default, common dev setup):
+bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest
+
+# DDEV (run from inside the web container; DB host inside DDEV is `db`):
+ddev exec bash bin/install-wp-tests.sh wordpress_test db db db latest
+
+# Ad-hoc Docker MySQL with MYSQL_ALLOW_EMPTY_PASSWORD=yes (what CI uses):
 bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 latest
 ```
 
-Then:
+Then run the suite:
 
 ```sh
+composer install       # one-time
 composer test          # or: vendor/bin/phpunit
 npm run test:phpunit   # alias
 ```
 
 Re-running `bin/install-wp-tests.sh` is idempotent — it skips re-downloading the suite if `/tmp/wordpress-tests-lib` already exists, but does drop and recreate the test database to keep runs deterministic.
-
-Inside DDEV the same script works — pass DDEV's MySQL credentials (`db`, `db`, `db`, `db`) and run from inside `ddev exec`.
 
 ## Building block editor assets
 
