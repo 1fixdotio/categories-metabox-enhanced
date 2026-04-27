@@ -111,24 +111,26 @@ install_db() {
 		return 0
 	fi
 
-	# Split host:port or host:/path/to/socket.
+	# Split host:port or host:/path/to/socket into an explicit array of
+	# mysqladmin flags so each value stays in its own argv slot regardless
+	# of word-splitting rules.
 	local host_part="${DB_HOST%%:*}"
 	local port_or_sock="${DB_HOST#*:}"
-	local extra=""
+	local conn=( "--user=$DB_USER" "--password=$DB_PASS" )
 	if [ "$port_or_sock" != "$DB_HOST" ]; then
 		if [[ $port_or_sock =~ ^[0-9]+$ ]]; then
-			extra=" --host=$host_part --port=$port_or_sock --protocol=tcp"
+			conn+=( "--host=$host_part" "--port=$port_or_sock" --protocol=tcp )
 		else
-			extra=" --socket=$port_or_sock"
+			conn+=( "--socket=$port_or_sock" )
 		fi
 	elif [ -n "$host_part" ]; then
-		extra=" --host=$host_part --protocol=tcp"
+		conn+=( "--host=$host_part" --protocol=tcp )
 	fi
 
 	# Drop and recreate to keep runs deterministic; safe because SKIP_DB_CREATE
 	# guards production paths.
-	mysqladmin -f drop "$DB_NAME" --user="$DB_USER" --password="$DB_PASS"$extra 2>/dev/null || true
-	mysqladmin create "$DB_NAME" --user="$DB_USER" --password="$DB_PASS"$extra
+	mysqladmin -f drop "$DB_NAME" "${conn[@]}" 2>/dev/null || true
+	mysqladmin create "$DB_NAME" "${conn[@]}"
 }
 
 install_wp
