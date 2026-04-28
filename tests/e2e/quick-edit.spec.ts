@@ -1,4 +1,4 @@
-import { test, expect, wpCli } from './fixtures';
+import { test, expect, wpCli, gotoAdmin } from './fixtures';
 
 const TAX = 'cme_e2e_no_default';
 const REST_BASE = 'cme_e2e_no_default_terms';
@@ -38,7 +38,7 @@ test.describe('Quick Edit — single-term enforcement', () => {
 		const postId = (await created.json()).id as number;
 		createdPostIds.push(postId);
 
-		await page.goto('/wp-admin/edit.php');
+		await gotoAdmin(page, '/wp-admin/edit.php');
 
 		// Open the Quick Edit form on the row whose title matches our seed.
 		// Filtering by row first avoids accidentally hitting another post's
