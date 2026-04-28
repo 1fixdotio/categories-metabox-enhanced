@@ -3,12 +3,23 @@ import { test, expect, wpCli } from './fixtures';
 const E2E_TAX = 'cme_e2e';
 const NO_DEFAULT_TAX = 'cme_e2e_no_default';
 const E2E_OPTION = 'category-metabox-enhanced_cme_e2e';
+const NO_DEFAULT_OPTION = 'category-metabox-enhanced_cme_e2e_no_default';
 
 const RADIO_FS_ON = JSON.stringify({
 	type: 'radio',
 	context: 'side',
 	priority: 'default',
 	metabox_title: 'E2E Taxonomy',
+	indented: 1,
+	allow_new_terms: 1,
+	force_selection: 1,
+});
+
+const NO_DEFAULT_RADIO_FS_ON = JSON.stringify({
+	type: 'radio',
+	context: 'side',
+	priority: 'default',
+	metabox_title: 'E2E No Default',
 	indented: 1,
 	allow_new_terms: 1,
 	force_selection: 1,
@@ -21,6 +32,10 @@ const RADIO_FS_ON = JSON.stringify({
  */
 function resetE2eOption() {
 	wpCli(['option', 'update', E2E_OPTION, RADIO_FS_ON, '--format=json']);
+}
+
+function resetNoDefaultOption() {
+	wpCli(['option', 'update', NO_DEFAULT_OPTION, NO_DEFAULT_RADIO_FS_ON, '--format=json']);
 }
 
 async function fetchPostTerms(api, postId: number, restBase: string) {
@@ -158,6 +173,94 @@ test.describe('Force selection — REST and programmatic regressions', () => {
 		expect(term.slug).toBe('beta');
 	});
 });
+
+test.describe('Force selection — REST PATCH (post updates)', () => {
+	// POST coverage above proves create-time enforcement. PATCH goes through
+	// the same WP_REST_Posts_Controller::handle_terms path but with a real
+	// "old terms" set to replace, which is what the Block Editor's autosave
+	// and term-panel saves actually do under the hood — so an enforcement
+	// regression on update would slip past the POST specs.
+	test.afterEach(() => {
+		resetNoDefaultOption();
+	});
+
+	test('PATCH: replacing existing term with [] + FS on → substituted with default', async ({ api, createdPostIds }) => {
+		const betaId = await termIdBySlug(api, 'cme_e2e_no_default_terms', 'beta');
+
+		const created = await api.post('/wp-json/wp/v2/posts', {
+			data: { title: 'PATCH empty FS on', status: 'publish', cme_e2e_no_default_terms: [ betaId ] },
+		});
+		expect(created.ok()).toBeTruthy();
+		const postId = (await created.json()).id as number;
+		createdPostIds.push(postId);
+
+		const patched = await api.post(`/wp-json/wp/v2/posts/${postId}`, {
+			data: { cme_e2e_no_default_terms: [] },
+		});
+		expect(patched.ok()).toBeTruthy();
+
+		const terms = await fetchPostTerms(api, postId, 'cme_e2e_no_default_terms');
+		expect(terms.length).toBe(1);
+		const term = await api.get(`/wp-json/wp/v2/cme_e2e_no_default_terms/${terms[0]}`).then((r) => r.json());
+		expect(term.slug).toBe('alpha');
+	});
+
+	test('PATCH: switching from term A to term B → only B remains, no leftover from A', async ({ api, createdPostIds }) => {
+		const alphaId = await termIdBySlug(api, 'cme_e2e_no_default_terms', 'alpha');
+		const betaId = await termIdBySlug(api, 'cme_e2e_no_default_terms', 'beta');
+
+		const created = await api.post('/wp-json/wp/v2/posts', {
+			data: { title: 'PATCH A to B', status: 'publish', cme_e2e_no_default_terms: [ alphaId ] },
+		});
+		expect(created.ok()).toBeTruthy();
+		const postId = (await created.json()).id as number;
+		createdPostIds.push(postId);
+
+		const patched = await api.post(`/wp-json/wp/v2/posts/${postId}`, {
+			data: { cme_e2e_no_default_terms: [ betaId ] },
+		});
+		expect(patched.ok()).toBeTruthy();
+
+		const terms = await fetchPostTerms(api, postId, 'cme_e2e_no_default_terms');
+		expect(terms).toEqual([ betaId ]);
+	});
+
+	test('PATCH: empty + FS off → terms cleared (no substitution)', async ({ api, createdPostIds }) => {
+		// FS-off is the negative control for our enforcement: the action
+		// handler bails out and lets WP commit the empty set as-is.
+		wpCli([
+			'option',
+			'update',
+			NO_DEFAULT_OPTION,
+			JSON.stringify({ ...JSON.parse(NO_DEFAULT_RADIO_FS_ON), force_selection: 0 }),
+			'--format=json',
+		]);
+
+		const betaId = await termIdBySlug(api, 'cme_e2e_no_default_terms', 'beta');
+		const created = await api.post('/wp-json/wp/v2/posts', {
+			data: { title: 'PATCH FS off clear', status: 'publish', cme_e2e_no_default_terms: [ betaId ] },
+		});
+		expect(created.ok()).toBeTruthy();
+		const postId = (await created.json()).id as number;
+		createdPostIds.push(postId);
+
+		const patched = await api.post(`/wp-json/wp/v2/posts/${postId}`, {
+			data: { cme_e2e_no_default_terms: [] },
+		});
+		expect(patched.ok()).toBeTruthy();
+
+		const terms = await fetchPostTerms(api, postId, 'cme_e2e_no_default_terms');
+		expect(terms).toEqual([]);
+	});
+});
+
+async function termIdBySlug(api, restBase: string, slug: string): Promise<number> {
+	const response = await api.get(`/wp-json/wp/v2/${restBase}?slug=${slug}`);
+	expect(response.ok()).toBeTruthy();
+	const body = await response.json();
+	expect(body.length).toBe(1);
+	return body[0].id as number;
+}
 
 /**
  * Block Editor 6.x renders the post canvas inside an iframe (`<iframe
