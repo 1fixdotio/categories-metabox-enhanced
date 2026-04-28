@@ -99,6 +99,34 @@ class Test_Block_Editor_Payload extends WP_UnitTestCase {
 		$this->assertContains( 'post', $entry['post_types'] );
 	}
 
+	public function test_boolean_payload_fields_reflect_zero_option_values() {
+		// Mirror of the full-payload test for the inverse: when indented,
+		// allow_new_terms, and force_selection are all 0, the (bool) casts
+		// in block_editor_taxonomies must produce literal false. A regression
+		// that swapped (bool) for (int), or accidentally inverted a flag,
+		// would silently flip every sidebar setting on save without an error.
+		$this->register_test_taxonomy(
+			'cme_phpunit_zeros',
+			array(
+				'hierarchical' => true,
+				'show_in_rest' => true,
+			),
+			array(
+				'type'            => 'radio',
+				'indented'        => 0,
+				'allow_new_terms' => 0,
+				'force_selection' => 0,
+			)
+		);
+
+		$entry = $this->find_entry( $this->invoke_payload(), 'cme_phpunit_zeros' );
+
+		$this->assertNotNull( $entry );
+		$this->assertFalse( $entry['indented'] );
+		$this->assertFalse( $entry['allow_new_terms'] );
+		$this->assertFalse( $entry['force_selection'] );
+	}
+
 	public function test_excludes_non_rest_hierarchical_taxonomy() {
 		// Non-REST taxes have no Block Editor sidebar to render into; the
 		// classic Taxonomy_Single_Term metabox is the only UI for them.
