@@ -1,4 +1,4 @@
-import { test as base, request, type APIRequestContext } from '@playwright/test';
+import { test as base, request, type APIRequestContext, type Page } from '@playwright/test';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -19,6 +19,26 @@ function loadCredentials(): Credentials {
  */
 export function wpCli(args: string[]): string {
 	return execFileSync('npx', ['wp-env', 'run', 'tests-cli', 'wp', ...args], { encoding: 'utf8' });
+}
+
+/**
+ * Wrap page.goto with a single retry on the Chromium-specific
+ * "Navigation ... is interrupted by another navigation to 'about:blank'"
+ * race. A stale about:blank navigation from a freshly-opened page can
+ * race the test's first goto when contexts turn over between tests; a
+ * brief wait + retry clears the stale navigation deterministically.
+ */
+export async function gotoAdmin(page: Page, url: string): Promise<void> {
+	try {
+		await page.goto(url);
+	} catch (err) {
+		const message = err instanceof Error ? err.message : String(err);
+		if (!message.includes('about:blank')) {
+			throw err;
+		}
+		await page.waitForTimeout(250);
+		await page.goto(url);
+	}
 }
 
 type Fixtures = {

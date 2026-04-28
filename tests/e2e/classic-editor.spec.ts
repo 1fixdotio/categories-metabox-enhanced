@@ -1,4 +1,4 @@
-import { test, expect, wpCli } from './fixtures';
+import { test, expect, wpCli, gotoAdmin } from './fixtures';
 
 const CLASSIC_TAX = 'cme_e2e_classic';
 const CLASSIC_CPT = 'cme_e2e_classic_post';
@@ -29,7 +29,7 @@ function resetOption(): void {
 }
 
 async function gotoNewClassicPost(page) {
-	await page.goto(`/wp-admin/post-new.php?post_type=${CLASSIC_CPT}`);
+	await gotoAdmin(page, `/wp-admin/post-new.php?post_type=${CLASSIC_CPT}`);
 	// Classic editor renders synchronously — no welcome guide / iframe to wait on.
 	await expect(page.locator('#post')).toBeVisible({ timeout: 10_000 });
 }

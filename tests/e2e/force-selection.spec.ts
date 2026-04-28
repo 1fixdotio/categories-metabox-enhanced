@@ -1,4 +1,4 @@
-import { test, expect, wpCli } from './fixtures';
+import { test, expect, wpCli, gotoAdmin } from './fixtures';
 
 const E2E_TAX = 'cme_e2e';
 const NO_DEFAULT_TAX = 'cme_e2e_no_default';
@@ -109,7 +109,7 @@ test.describe('Force selection — Settings page', () => {
 	});
 
 	test('toggling Force selection off persists across reload', async ({ page }) => {
-		await page.goto('/wp-admin/options-general.php?page=category-metabox-enhanced&tab=cme_e2e');
+		await gotoAdmin(page, '/wp-admin/options-general.php?page=category-metabox-enhanced&tab=cme_e2e');
 
 		const checkbox = page.locator('input[name="category-metabox-enhanced_cme_e2e[force_selection]"]');
 		await expect(checkbox).toBeChecked();
@@ -118,7 +118,7 @@ test.describe('Force selection — Settings page', () => {
 		await page.locator('input[type="submit"][name="submit"]').click();
 		await expect(page.locator('.notice-success, #setting-error-settings_updated')).toBeVisible({ timeout: 10_000 });
 
-		await page.goto('/wp-admin/options-general.php?page=category-metabox-enhanced&tab=cme_e2e');
+		await gotoAdmin(page, '/wp-admin/options-general.php?page=category-metabox-enhanced&tab=cme_e2e');
 		await expect(page.locator('input[name="category-metabox-enhanced_cme_e2e[force_selection]"]')).not.toBeChecked();
 	});
 });
@@ -268,7 +268,7 @@ async function termIdBySlug(api, restBase: string, slug: string): Promise<number
  * document. Sidebar panels — including ours — stay in the main DOM.
  */
 async function openPostNew(page, title: string) {
-	await page.goto('/wp-admin/post-new.php');
+	await gotoAdmin(page, '/wp-admin/post-new.php');
 
 	// Welcome guide may pop up on a fresh user; close if present, ignore if not.
 	await page

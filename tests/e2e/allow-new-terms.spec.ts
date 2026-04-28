@@ -1,4 +1,4 @@
-import { test, expect, wpCli } from './fixtures';
+import { test, expect, wpCli, gotoAdmin } from './fixtures';
 
 const TAX = 'cme_e2e_no_default';
 const REST_BASE = 'cme_e2e_no_default_terms';
@@ -46,7 +46,7 @@ function deleteCreatedTerm(): void {
 }
 
 async function openPostNew(page, title: string): Promise<void> {
-	await page.goto('/wp-admin/post-new.php');
+	await gotoAdmin(page, '/wp-admin/post-new.php');
 	await page
 		.locator('.edit-post-welcome-guide button[aria-label="Close"], .editor-welcome-guide button[aria-label="Close"]')
 		.first()
