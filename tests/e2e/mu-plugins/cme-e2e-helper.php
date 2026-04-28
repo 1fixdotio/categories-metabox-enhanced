@@ -23,6 +23,8 @@ defined( 'ABSPATH' ) || exit;
 
 const CME_E2E_TAX            = 'cme_e2e';
 const CME_E2E_TAX_NO_DEFAULT = 'cme_e2e_no_default';
+const CME_E2E_TAX_CLASSIC    = 'cme_e2e_classic';
+const CME_E2E_CPT_CLASSIC    = 'cme_e2e_classic_post';
 
 add_action( 'init', static function () {
 	register_taxonomy(
@@ -54,7 +56,37 @@ add_action( 'init', static function () {
 		)
 	);
 
-	if ( ! get_option( 'cme_e2e_seeded' ) ) {
+	// Classic-editor surface: a CPT without REST support so WordPress falls
+	// back to the legacy post editor, paired with a non-REST hierarchical
+	// taxonomy. Lets the Playwright suite assert against the actual
+	// Taxonomy_Single_Term metabox DOM the plugin still ships for sites
+	// that haven't moved to Block Editor yet.
+	register_post_type(
+		CME_E2E_CPT_CLASSIC,
+		array(
+			'label'        => 'E2E Classic',
+			'public'       => true,
+			'show_ui'      => true,
+			'show_in_menu' => true,
+			'show_in_rest' => false,
+			'supports'     => array( 'title', 'editor' ),
+		)
+	);
+
+	register_taxonomy(
+		CME_E2E_TAX_CLASSIC,
+		array( CME_E2E_CPT_CLASSIC ),
+		array(
+			'label'        => 'E2E Classic Tax',
+			'hierarchical' => true,
+			'show_ui'      => true,
+			'show_in_rest' => false,
+		)
+	);
+
+	// Bumped to '2' when the classic-editor CPT/tax + Foo/Bar terms were
+	// added; re-seeds existing dev envs that still hold the v1 baseline.
+	if ( '2' !== get_option( 'cme_e2e_seeded' ) ) {
 		update_option( 'category-metabox-enhanced_' . CME_E2E_TAX, array(
 			'type'            => 'radio',
 			'context'         => 'side',
@@ -75,7 +107,17 @@ add_action( 'init', static function () {
 			'force_selection' => 1,
 		) );
 
-		update_option( 'cme_e2e_seeded', '1' );
+		update_option( 'category-metabox-enhanced_' . CME_E2E_TAX_CLASSIC, array(
+			'type'            => 'radio',
+			'context'         => 'side',
+			'priority'        => 'default',
+			'metabox_title'   => 'E2E Classic Tax',
+			'indented'        => 1,
+			'allow_new_terms' => 1,
+			'force_selection' => 1,
+		) );
+
+		update_option( 'cme_e2e_seeded', '2' );
 	}
 
 	// Idempotent term seeding — safe to run on every init since each branch
@@ -85,6 +127,8 @@ add_action( 'init', static function () {
 		array( 'tax' => CME_E2E_TAX,            'name' => 'Reviews', 'slug' => 'reviews' ),
 		array( 'tax' => CME_E2E_TAX_NO_DEFAULT, 'name' => 'Alpha',   'slug' => 'alpha' ),
 		array( 'tax' => CME_E2E_TAX_NO_DEFAULT, 'name' => 'Beta',    'slug' => 'beta' ),
+		array( 'tax' => CME_E2E_TAX_CLASSIC,    'name' => 'Foo',     'slug' => 'foo' ),
+		array( 'tax' => CME_E2E_TAX_CLASSIC,    'name' => 'Bar',     'slug' => 'bar' ),
 	) as $term ) {
 		if ( ! get_term_by( 'slug', $term['slug'], $term['tax'] ) ) {
 			wp_insert_term( $term['name'], $term['tax'], array( 'slug' => $term['slug'] ) );
