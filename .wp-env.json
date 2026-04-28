@@ -5,7 +5,8 @@
 		"https://downloads.wordpress.org/plugin/classic-editor.latest-stable.zip"
 	],
 	"mappings": {
-		"wp-content/mu-plugins/cme-test-seed.php": "./bin/test-seed.php"
+		"wp-content/mu-plugins/cme-test-seed.php": "./bin/test-seed.php",
+		"wp-content/mu-plugins/cme-e2e-helper.php": "./tests/e2e/mu-plugins/cme-e2e-helper.php"
 	},
 	"config": {
 		"WP_DEBUG": true,
