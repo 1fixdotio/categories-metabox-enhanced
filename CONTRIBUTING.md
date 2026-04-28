@@ -2,7 +2,7 @@
 
 ## Local development environment
 
-The plugin is shipped with a `@wordpress/env` config so you can spin up a real WordPress site for manual smoke testing and (in PR C) Playwright e2e:
+The plugin is shipped with a `@wordpress/env` config so you can spin up a real WordPress site for manual smoke testing and Playwright e2e:
 
 ```sh
 npm install
@@ -39,10 +39,21 @@ Then run the suite:
 ```sh
 composer install       # one-time
 composer test          # or: vendor/bin/phpunit
-npm run test:phpunit   # alias
 ```
 
 Re-running `bin/install-wp-tests.sh` is idempotent — it skips re-downloading the suite if `/tmp/wordpress-tests-lib` already exists, but does drop and recreate the test database to keep runs deterministic.
+
+## Running Playwright e2e
+
+The e2e suite drives a real Block Editor through wp-env. Boot wp-env first, then:
+
+```sh
+npm run test:e2e            # headless (what CI runs)
+npm run test:e2e:headed     # visible browser, sequential
+npx playwright test --ui    # interactive runner with timeline + time-travel
+```
+
+The `setup` project provisions an application password via wp-cli and saves it under `tests/e2e/.auth/` (gitignored). After a failure, `npx playwright show-trace test-results/<failure-folder>/trace.zip` opens the trace viewer.
 
 ## Building block editor assets
 
