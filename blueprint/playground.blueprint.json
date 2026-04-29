@@ -11,16 +11,14 @@
     {
       "step": "installPlugin",
       "pluginData": {
-        "resource": "git:directory",
-        "url": "https://github.com/1fixdotio/categories-metabox-enhanced.git",
-        "ref": "playground-demo",
-        "path": "."
+        "resource": "url",
+        "url": "https://github.com/1fixdotio/categories-metabox-enhanced/archive/playground-demo.zip"
       },
       "options": { "activate": true }
     },
     {
       "step": "runPHP",
-      "code": "<?php require_once '/wordpress/wp-load.php'; wp_mkdir_p('/wordpress/wp-content/mu-plugins'); copy('/wordpress/wp-content/plugins/categories-metabox-enhanced/blueprint/seed/mu-demo-notice.php', '/wordpress/wp-content/mu-plugins/cme-demo-notice.php'); require '/wordpress/wp-content/plugins/categories-metabox-enhanced/blueprint/seed/seed-data.php';"
+      "code": "<?php require_once '/wordpress/wp-load.php'; $matches = glob('/wordpress/wp-content/plugins/categories-metabox-enhanced*', GLOB_ONLYDIR); $plugin_dir = $matches ? $matches[0] : ''; if ($plugin_dir && file_exists($plugin_dir . '/blueprint/seed/seed-data.php')) { wp_mkdir_p('/wordpress/wp-content/mu-plugins'); copy($plugin_dir . '/blueprint/seed/mu-demo-notice.php', '/wordpress/wp-content/mu-plugins/cme-demo-notice.php'); require $plugin_dir . '/blueprint/seed/seed-data.php'; } else { error_log('CME demo seed: plugin directory not found, skipping seed'); }"
     }
   ]
 }
