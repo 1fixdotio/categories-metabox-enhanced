@@ -20,7 +20,7 @@
     },
     {
       "step": "runPHP",
-      "code": "<?php require_once '/wordpress/wp-load.php'; copy('/wordpress/wp-content/plugins/categories-metabox-enhanced/blueprint/seed/mu-demo-notice.php', '/wordpress/wp-content/mu-plugins/cme-demo-notice.php'); require '/wordpress/wp-content/plugins/categories-metabox-enhanced/blueprint/seed/seed-data.php';"
+      "code": "<?php require_once '/wordpress/wp-load.php'; wp_mkdir_p('/wordpress/wp-content/mu-plugins'); copy('/wordpress/wp-content/plugins/categories-metabox-enhanced/blueprint/seed/mu-demo-notice.php', '/wordpress/wp-content/mu-plugins/cme-demo-notice.php'); require '/wordpress/wp-content/plugins/categories-metabox-enhanced/blueprint/seed/seed-data.php';"
     }
   ]
 }
