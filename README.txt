@@ -13,6 +13,8 @@ Replace the checkboxes with radio buttons or a select drop-down in the built-in 
 
 == Description ==
 
+**Try it live in your browser** — [launch the WordPress Playground demo](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/1fixdotio/categories-metabox-enhanced/master/blueprint/playground.blueprint.json). Boots a WordPress instance with this plugin active, the Category taxonomy pre-configured as radio buttons, and seeded posts you can edit in the Block Editor or run through Quick Edit / Bulk Edit immediately.
+
 Thanks to [Taxonomy_Single_Term](https://github.com/WebDevStudios/Taxonomy_Single_Term), a library created by [WebDevStudios](http://webdevstudios.com/), it made my work much easier on creating this plugin.
 
 With Categories Metabox Enhanced, you can:

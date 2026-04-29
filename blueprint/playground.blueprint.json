@@ -1,0 +1,42 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "meta": {
+    "title": "Categories Metabox Enhanced — Single-term UI Demo",
+    "author": "1fixdotio",
+    "description": "Pre-configured WordPress with the Categories metabox switched to radio buttons. Open the seeded post or create a new one to see the single-term UI in both the Block Editor sidebar and Classic Editor metabox."
+  },
+  "login": true,
+  "landingPage": "/wp-admin/post-new.php",
+  "steps": [
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "git:directory",
+        "url": "https://github.com/1fixdotio/categories-metabox-enhanced.git",
+        "ref": "master",
+        "path": "."
+      },
+      "options": { "activate": true }
+    },
+    {
+      "step": "writeFile",
+      "path": "/wordpress/wp-content/mu-plugins/cme-demo-notice.php",
+      "data": {
+        "resource": "url",
+        "url": "https://raw.githubusercontent.com/1fixdotio/categories-metabox-enhanced/master/blueprint/seed/mu-demo-notice.php"
+      }
+    },
+    {
+      "step": "writeFile",
+      "path": "/tmp/cme-seed.php",
+      "data": {
+        "resource": "url",
+        "url": "https://raw.githubusercontent.com/1fixdotio/categories-metabox-enhanced/master/blueprint/seed/seed-data.php"
+      }
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php require_once '/wordpress/wp-load.php'; require '/tmp/cme-seed.php';"
+    }
+  ]
+}
