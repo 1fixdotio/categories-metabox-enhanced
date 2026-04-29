@@ -12,7 +12,7 @@
       "step": "installPlugin",
       "pluginData": {
         "resource": "url",
-        "url": "https://github.com/1fixdotio/categories-metabox-enhanced/archive/playground-demo.zip"
+        "url": "https://github.com/1fixdotio/categories-metabox-enhanced/archive/master.zip"
       },
       "options": { "activate": true }
     },
