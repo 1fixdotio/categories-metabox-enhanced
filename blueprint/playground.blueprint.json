@@ -13,7 +13,7 @@
       "pluginData": {
         "resource": "git:directory",
         "url": "https://github.com/1fixdotio/categories-metabox-enhanced.git",
-        "ref": "master",
+        "ref": "playground-demo",
         "path": "."
       },
       "options": { "activate": true }
