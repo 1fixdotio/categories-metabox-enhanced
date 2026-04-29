@@ -28,12 +28,10 @@ Boot sequence when someone opens the Playground link:
 
 1. Playground boots PHP + WordPress in the browser (WASM).
 2. `installPlugin` clones the plugin source from `master` (via the `git:directory` resource) and activates it. The Block Editor sidebar bundle is read from the committed `admin/js/block-editor/build/` artifacts — no build step runs inside Playground.
-3. `writeFile` drops `mu-demo-notice.php` into `wp-content/mu-plugins/`.
-4. `writeFile` drops `seed-data.php` into `/tmp/`.
-5. `runPHP` loads WordPress and runs the seed script.
-6. The browser opens on `/wp-admin/post-new.php`; the mu-plugin notice explains where to look.
+3. `runPHP` reads the seed files out of the cloned plugin directory: it `copy()`s `mu-demo-notice.php` into `wp-content/mu-plugins/` and `require`s `seed-data.php` to set the radio option, create the categories, and insert the demo posts.
+4. The browser opens on `/wp-admin/post-new.php`; the mu-plugin notice explains where to look.
 
-Because the seed script and the mu-plugin notice are fetched from the repo's raw URLs, the Blueprint only fully reflects the live source after the seed files are pushed to `master`. The plugin itself is also fetched from `master` via `git:directory`.
+The seed files travel inside the cloned plugin source, so they always match the plugin code being installed — no separate `raw.githubusercontent.com` fetches, no chance of seed and code drifting apart between branches.
 
 ## Why `git:directory` and not a release zip
 
@@ -52,16 +50,18 @@ If a release pipeline is added later, swap the `pluginData` block to:
 
 ## Testing on a branch
 
-The Blueprint hardcodes `master` in three places:
+`pluginData.ref` is the only ref the Blueprint pins. To test changes on a branch:
 
-1. `pluginData.ref` — the git ref Playground clones the plugin from.
-2. The `raw.githubusercontent.com/.../master/blueprint/seed/mu-demo-notice.php` URL.
-3. The `raw.githubusercontent.com/.../master/blueprint/seed/seed-data.php` URL.
-
-To test changes on a branch, swap all three `master` occurrences in `playground.blueprint.json` to your branch name, push, and open:
+1. Edit `playground.blueprint.json` and change `"ref": "master"` to `"ref": "<your-branch>"`.
+2. Push the branch.
+3. Open:
 
 ```
-https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/1fixdotio/categories-metabox-enhanced/<branch>/blueprint/playground.blueprint.json
+https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/1fixdotio/categories-metabox-enhanced/<your-branch>/blueprint/playground.blueprint.json
 ```
 
-Swap them back to `master` before merging — otherwise the live demo will install whichever branch you left in there.
+Swap `ref` back to `master` before merging — otherwise the live demo will install whichever branch you left in there.
+
+## Branching model and demo availability
+
+PRs merge to `develop`; releases merge `develop` into `master`. The Blueprint manifest (`playground.blueprint.json`) and the "Try it live" link in `README.txt` both target `master`, so the public demo URL only updates when a release lands. Between merge-to-develop and the next release-to-master, the demo continues to reflect the previously released state — by design, so users always land on the version that's actually published, not in-flight work.

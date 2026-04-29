@@ -19,24 +19,8 @@
       "options": { "activate": true }
     },
     {
-      "step": "writeFile",
-      "path": "/wordpress/wp-content/mu-plugins/cme-demo-notice.php",
-      "data": {
-        "resource": "url",
-        "url": "https://raw.githubusercontent.com/1fixdotio/categories-metabox-enhanced/master/blueprint/seed/mu-demo-notice.php"
-      }
-    },
-    {
-      "step": "writeFile",
-      "path": "/tmp/cme-seed.php",
-      "data": {
-        "resource": "url",
-        "url": "https://raw.githubusercontent.com/1fixdotio/categories-metabox-enhanced/master/blueprint/seed/seed-data.php"
-      }
-    },
-    {
       "step": "runPHP",
-      "code": "<?php require_once '/wordpress/wp-load.php'; require '/tmp/cme-seed.php';"
+      "code": "<?php require_once '/wordpress/wp-load.php'; copy('/wordpress/wp-content/plugins/categories-metabox-enhanced/blueprint/seed/mu-demo-notice.php', '/wordpress/wp-content/mu-plugins/cme-demo-notice.php'); require '/wordpress/wp-content/plugins/categories-metabox-enhanced/blueprint/seed/seed-data.php';"
     }
   ]
 }
