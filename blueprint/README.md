@@ -27,15 +27,19 @@ Clicking the link boots WordPress in your browser with the plugin pre-installed,
 Boot sequence when someone opens the Playground link:
 
 1. Playground boots PHP + WordPress in the browser (WASM).
-2. `installPlugin` clones the plugin source from `master` (via the `git:directory` resource) and activates it. The Block Editor sidebar bundle is read from the committed `admin/js/block-editor/build/` artifacts — no build step runs inside Playground.
-3. `runPHP` reads the seed files out of the cloned plugin directory: it `copy()`s `mu-demo-notice.php` into `wp-content/mu-plugins/` and `require`s `seed-data.php` to set the radio option, create the categories, and insert the demo posts.
+2. `installPlugin` downloads the plugin source from GitHub's auto-generated source-archive zip (`/archive/<branch>.zip`) and activates it. The Block Editor sidebar bundle is read from the committed `admin/js/block-editor/build/` artifacts inside the archive — no build step runs inside Playground.
+3. `runPHP` finds the installed plugin directory via `glob()` (GitHub archives extract to `categories-metabox-enhanced-<branch>/`, not the bare `categories-metabox-enhanced/` a wp.org zip would use), `copy()`s `mu-demo-notice.php` into `wp-content/mu-plugins/`, and `require`s `seed-data.php` to set the radio option, create the categories, and insert the demo posts.
 4. The browser opens on `/wp-admin/post-new.php`; the mu-plugin notice explains where to look.
 
-The seed files travel inside the cloned plugin source, so they always match the plugin code being installed — no separate `raw.githubusercontent.com` fetches, no chance of seed and code drifting apart between branches.
+The seed files travel inside the same archive zip as the plugin code, so they always match the plugin code being installed — no separate `raw.githubusercontent.com` fetches, no chance of seed and code drifting apart between branches.
 
-## Why `git:directory` and not a release zip
+## Why a source-archive zip and not a release zip or wordpress.org slug
 
-The MSE sibling plugin (which this scaffolding is patterned after) installs from a pinned GitHub release zip built by `10up/action-wordpress-plugin-deploy`. CME doesn't ship that workflow yet, and the wordpress.org listing is pinned at 0.7.1 — missing every 0.8/0.9 feature (Block Editor sidebar panel, force_selection, server-side enforcement). Installing from `git:directory` against `master` is the only way the demo reflects what the readme actually describes.
+The MSE sibling plugin (which this scaffolding is patterned after) installs from a pinned GitHub release zip built by `10up/action-wordpress-plugin-deploy`. CME doesn't ship that workflow yet, and the wordpress.org listing is pinned at 0.7.1 — missing every 0.8/0.9 feature (Block Editor sidebar panel, force_selection, server-side enforcement). The GitHub source-archive zip is the only resource that:
+
+- Reflects what the readme actually describes (current `master`, not stale `0.7.1`).
+- Requires no release pipeline or deploy workflow.
+- Is observable end-to-end (a real zip with a documented `installPlugin` path, unlike the `git:directory` resource we tried first that failed with opaque "PHP.run() failed with exit code 255" errors and no logs).
 
 If a release pipeline is added later, swap the `pluginData` block to:
 
@@ -46,13 +50,13 @@ If a release pipeline is added later, swap the `pluginData` block to:
 },
 ```
 
-…and the demo gains version-pinning. Until then, every push to `master` updates the demo.
+…and the demo gains version-pinning, plus the install directory becomes the bare `categories-metabox-enhanced/` (no `<branch>` suffix). Until then, every push to `master` updates the demo.
 
 ## Testing on a branch
 
-`pluginData.ref` is the only ref the Blueprint pins. To test changes on a branch:
+The branch name appears in the `pluginData.url` (e.g. `archive/master.zip`). To test changes on a branch:
 
-1. Edit `playground.blueprint.json` and change `"ref": "master"` to `"ref": "<your-branch>"`.
+1. Edit `playground.blueprint.json` and change the `archive/master.zip` segment of `pluginData.url` to `archive/<your-branch>.zip`.
 2. Push the branch.
 3. Open:
 
@@ -60,7 +64,7 @@ If a release pipeline is added later, swap the `pluginData` block to:
 https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/1fixdotio/categories-metabox-enhanced/<your-branch>/blueprint/playground.blueprint.json
 ```
 
-Swap `ref` back to `master` before merging — otherwise the live demo will install whichever branch you left in there.
+Revert the URL to `archive/master.zip` before merging — otherwise the live demo will install whichever branch you left in there. The `glob()` discovery in `runPHP` works regardless of which branch the archive was generated from, so no other edits are needed for branch testing.
 
 ## Branching model and demo availability
 
