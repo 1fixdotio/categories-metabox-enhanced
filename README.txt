@@ -18,15 +18,39 @@ Thanks to [Taxonomy_Single_Term](https://github.com/WebDevStudios/Taxonomy_Singl
 With Categories Metabox Enhanced, you can:
 
 * Change the built-in Categories metabox/panel to a single term UI, which means replacing the checkboxes with radio buttons or a select drop-down.
-* Apply the single term UI to other hierarchical taxonomies in the plugin's Settings page.
-* Customized the single term UI by setting these options:
- * Priority and position of the metabox placement.
- * Title of the metabox.
- * If child-terms should be indenting.
- * If adding of new terms from the metabox is enable.
- * If a term selection is required (Force selection). When on, the classic metabox hides the "None" option, the Block Editor sidebar drops the "— Select —" entry once a term is chosen, and an empty save is substituted with a default term server-side so REST and programmatic callers can't bypass it.
+* Apply the single term UI to other hierarchical taxonomies from the plugin's Settings page.
+* Configure each hierarchical taxonomy independently — the same install can keep one taxonomy as checkboxes while another is forced to radio.
+* Customize the single term UI by setting these options:
+ * Option type (checkbox, radio, or select).
+ * Priority and position (context) of the metabox placement. *Classic editor only.*
+ * Title of the metabox / Block Editor panel.
+ * Whether child-terms should be indented.
+ * Whether adding new terms from the metabox is enabled.
+ * Whether a term selection is required (Force selection). When on, the classic metabox hides the "None" option, the Block Editor sidebar drops the "— Select —" entry once a term is chosen, and an empty save is substituted with a default term server-side so REST and programmatic callers can't bypass it.
+
+The single-term invariant is enforced everywhere posts can be saved: the Classic Editor metabox, the Block Editor sidebar panel, **Quick Edit**, **Bulk Edit**, the REST API, WP-CLI, and any code that calls `wp_set_object_terms()` directly. The classic-editor and Block Editor surfaces enforce in the UI; everything else is enforced on the server via the `set_object_terms` action, which coerces multi-term submissions to the last term and substitutes the default term on empty submissions when Force selection is on.
 
 The substituted default term resolves in this order: the `default_<taxonomy>` option (e.g. `default_category`) → the `default_term_<taxonomy>` option populated by `register_taxonomy()` `default_term` arg (WP 5.5+) → the first term ordered by name. Override per taxonomy with the `of_cme_force_selection_default_term` filter.
+
+The Block Editor sidebar panel is rendered for taxonomies registered with `show_in_rest = true`. Hierarchical taxonomies that opt out of REST fall back to the Classic Editor metabox path.
+
+== Frequently Asked Questions ==
+
+= Does this work in Quick Edit and Bulk Edit? =
+
+Yes. WordPress's Quick Edit and Bulk Edit forms render their own checkbox UI for hierarchical taxonomies and the plugin doesn't override that markup, so those forms still let you tick more than one box. The single-term invariant is preserved server-side: when the form is submitted, the plugin's `set_object_terms` listener detects the multi-term commit and coerces the post to the last selected term. The same behavior applies to REST API writes and any programmatic `wp_set_object_terms()` call.
+
+= Does it work with the Block Editor (Gutenberg)? =
+
+Yes. As of 0.8.0 the plugin ships a native sidebar panel built on `@wordpress/components` (`TreeSelect` for select mode, a radio tree for radio mode) that replaces the default Categories panel. The classic metabox is suppressed per-post when the Block Editor is in use, so you don't see a duplicate UI when the Classic Editor plugin lets users switch editors per post.
+
+= Does it support custom hierarchical taxonomies? =
+
+Yes. Every taxonomy registered with `hierarchical = true` shows up in the Settings page with its own configuration block. Non-hierarchical taxonomies (tags-style) are out of scope.
+
+= How do I change the default term used when Force selection substitutes one in? =
+
+Set the `default_<taxonomy>` option (e.g. the built-in "Default Post Category" under Settings → Writing for `category`), or the `default_term` argument on `register_taxonomy()` for custom taxonomies. To override per call, use the `of_cme_force_selection_default_term` filter — it receives the resolved term ID and the taxonomy slug.
 
 == Installation ==
 
