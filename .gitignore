@@ -1,0 +1,7 @@
+node_modules/
+vendor/
+.phpunit.result.cache
+.DS_Store
+tests/e2e/.auth/
+test-results/
+playwright-report/

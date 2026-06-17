@@ -1,0 +1,23 @@
+{
+  "name": "categories-metabox-enhanced",
+  "version": "0.9.1",
+  "description": "Replace the checkboxes with radio buttons or a select drop-down in the built-in Categories metabox and Block Editor sidebar.",
+  "private": true,
+  "license": "GPL-2.0+",
+  "scripts": {
+    "build": "wp-scripts build admin/js/block-editor/src/index.js --output-path=admin/js/block-editor/build",
+    "start": "wp-scripts start admin/js/block-editor/src/index.js --output-path=admin/js/block-editor/build",
+    "env:start": "wp-env start",
+    "env:stop": "wp-env stop",
+    "env:destroy": "wp-env destroy",
+    "env:logs": "wp-env logs",
+    "env:cli": "wp-env run cli wp",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@wordpress/env": "^11.0.0",
+    "@wordpress/scripts": "^32.0.0"
+  }
+}

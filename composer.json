@@ -1,0 +1,21 @@
+{
+    "name": "1fixdotio/categories-metabox-enhanced",
+    "description": "Replace the checkboxes with radio buttons or a select drop-down in the built-in Categories metabox and Block Editor sidebar.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "yoast/phpunit-polyfills": "^2.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        },
+        "platform": {
+            "php": "7.4"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}

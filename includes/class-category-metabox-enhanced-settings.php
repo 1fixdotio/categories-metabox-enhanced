@@ -113,6 +113,15 @@ class Category_Metabox_Enhanced_Settings_Settings {
 				$args
 			);
 
+			add_settings_field(
+				'force_selection',
+				__( 'Force selection', 'of-cme' ),
+				array( $this, 'force_selection_callback' ),
+				$section,
+				$tax,
+				$args
+			);
+
 			register_setting(
 				$section,
 				$section,
@@ -171,6 +180,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
 			$html .= '<label title="' . $context . '"><input type="radio" name="' . $args[0] . '[context]" value="' . $context . '" ' . checked( $context, $value, false ) . '> <span>' . ucfirst( $context ) . '</span></label><br>';
 		}
 		$html .= '</fieldset>';
+		$html .= '<p class="description">' . __( 'Classic editor only. Ignored by the Block Editor sidebar panel.', 'of-cme' ) . '</p>';
 
 		echo $html;
 
@@ -198,6 +208,7 @@ class Category_Metabox_Enhanced_Settings_Settings {
 			$html .= '<label title="' . $priority . '"><input type="radio" name="' . $args[0] . '[priority]" value="' . $priority . '" ' . checked( $priority, $value, false ) . '> <span>' . ucfirst( $priority ) . '</span></label><br>';
 		}
 		$html .= '</fieldset>';
+		$html .= '<p class="description">' . __( 'Classic editor only. Ignored by the Block Editor sidebar panel.', 'of-cme' ) . '</p>';
 
 		echo $html;
 
@@ -207,7 +218,8 @@ class Category_Metabox_Enhanced_Settings_Settings {
 
 		$value = isset( $args[1]['metabox_title'] ) ? $args[1]['metabox_title'] : '';
 
-		$html = '<input type="text" id="metabox_title" name="' . $args[0] . '[metabox_title]" value="' . $value . '" class="regular-text" />';
+		$html  = '<input type="text" id="metabox_title" name="' . $args[0] . '[metabox_title]" value="' . esc_attr( $value ) . '" class="regular-text" />';
+		$html .= '<p class="description">' . __( 'Used as the metabox title in the classic editor and the panel title in the Block Editor sidebar. Defaults to the taxonomy name.', 'of-cme' ) . '</p>';
 
 		echo $html;
 
@@ -230,11 +242,25 @@ class Category_Metabox_Enhanced_Settings_Settings {
 
 		$html = '<label for="allow_new_terms"><input type="checkbox" id="allow_new_terms" name="' . $args[0] . '[allow_new_terms]" value="1" ' . checked( $value, 1, false ) . ' /> Yes</label>';
 		/* translators: 1. Open strong tag. 2. Close String tag. */
-		$html .= '<p class="description">' . sprintf( esc_html__( 'Check if allows adding of new terms from the metabox. %1$sIt does not work properly when the Option Type is Select.%2$s', 'of-cme' ), '<strong>', '</strong>' ) . '</p>';
+		$html .= '<p class="description">' . sprintf( esc_html__( 'Check if allows adding of new terms from the metabox. %1$sIn the classic editor, it does not work properly when the Option Type is Select.%2$s', 'of-cme' ), '<strong>', '</strong>' ) . '</p>';
 
 		echo $html;
 
 	} // end allow_new_terms_callback
+
+	public function force_selection_callback( $args ) {
+
+		// Default to 1 so existing installs (whose saved option lacks this key)
+		// render in sync with of_cme_get_defaults(), matching the long-standing
+		// classic-editor behavior of hiding the "None" option.
+		$value = isset( $args[1]['force_selection'] ) ? $args[1]['force_selection'] : 1;
+
+		$html  = '<label for="force_selection"><input type="checkbox" id="force_selection" name="' . $args[0] . '[force_selection]" value="1" ' . checked( $value, 1, false ) . ' /> Yes</label>';
+		$html .= '<p class="description">' . __( 'Require a term to be selected. In the classic editor this hides the "None" option; in the Block Editor sidebar it removes "— Select —" once a term is chosen and substitutes the first term on save when none is provided.', 'of-cme' ) . '</p>';
+
+		echo $html;
+
+	} // end force_selection_callback
 
 	/**
 	 * Validate inputs
