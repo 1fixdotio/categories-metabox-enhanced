@@ -256,6 +256,10 @@ class Category_Metabox_Enhanced_Admin {
 			true
 		);
 
+		// Register translations so the panel's __() / sprintf() strings can
+		// load from JSON language packs; the bundle declares wp-i18n as a dep.
+		wp_set_script_translations( $this->name . '-block-editor', 'of-cme' );
+
 		wp_add_inline_script(
 			$this->name . '-block-editor',
 			'window.ofCmeBlockEditor = ' . wp_json_encode( array( 'taxonomies' => $taxonomies ) ) . ';',

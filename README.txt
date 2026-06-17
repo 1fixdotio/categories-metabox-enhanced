@@ -69,6 +69,7 @@ Set the `default_<taxonomy>` option (e.g. the built-in "Default Post Category" u
 
 = 0.9.1 =
 * Fix server-side single-term enforcement, which was registered against `pre_set_object_terms` — a hook that does not exist in WordPress core — and never executed in 0.9.0. The handler now hooks `set_object_terms` and re-issues `wp_set_object_terms` with a corrected list when the single-term contract is violated, so REST and programmatic callers are now actually enforced. The classic-editor metabox path was unaffected; it relies on UI-level enforcement.
+* Register script translations for the Block Editor sidebar panel so its strings can be loaded from language packs.
 
 = 0.9.0 =
 * Add a "Force selection" per-taxonomy setting (defaults on) replacing the previously hardcoded classic-editor behavior. When on, the Block Editor sidebar suppresses "— Select —" once a term is chosen, and the server-side handler substitutes a default term for empty submissions on radio/select taxonomies — closing the bypass that REST and programmatic callers had on the single-term invariant. (The 0.9.0 release wired this handler against the wrong hook name; see 0.9.1.)
