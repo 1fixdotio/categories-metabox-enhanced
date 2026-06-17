@@ -70,7 +70,9 @@ class Test_Classic_Ajax_Add_Term extends WP_UnitTestCase {
 		remove_filter( 'wp_doing_ajax', '__return_true' );
 		remove_filter( 'wp_die_ajax_handler', array( $this, 'get_die_handler' ), 1 );
 		wp_set_current_user( 0 );
-		unset( $_POST, $_GET, $_REQUEST );
+		$_POST    = array();
+		$_GET     = array();
+		$_REQUEST = array();
 		set_current_screen( 'front' );
 
 		unregister_taxonomy( self::SOURCE_TAX );
