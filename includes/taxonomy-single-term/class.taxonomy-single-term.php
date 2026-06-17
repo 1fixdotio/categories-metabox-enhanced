@@ -379,6 +379,12 @@ class Taxonomy_Single_Term {
 		$term_name = isset( $_POST['term_name'] ) ? sanitize_text_field( $_POST['term_name'] ) : false;
 		$taxonomy  = isset( $_POST['taxonomy'] ) ? sanitize_text_field( $_POST['taxonomy'] ) : false;
 
+		if ( $taxonomy !== $this->slug ) {
+			wp_send_json_error( __( 'Invalid taxonomy request.' ), 400 );
+		}
+
+		$tax_obj   = get_taxonomy( $taxonomy );
+
 		$friendly_taxonomy = $this->taxonomy()->labels->singular_name;
 
 		// Ensure user is allowed to add new terms
@@ -388,6 +394,10 @@ class Taxonomy_Single_Term {
 
 		if( !taxonomy_exists( $taxonomy ) ) {
 			wp_send_json_error( __( "Taxonomy $friendly_taxonomy does not exist. Cannot add term" ) );
+		}
+
+		if ( ! $tax_obj || ! current_user_can( $tax_obj->cap->edit_terms ) ) {
+			wp_send_json_error( __( 'Sorry, you are not allowed to create terms in this taxonomy.' ), 403 );
 		}
 
 		if( !wp_verify_nonce( $nonce, 'taxonomy_' . $taxonomy, '_add_term' ) ) {
