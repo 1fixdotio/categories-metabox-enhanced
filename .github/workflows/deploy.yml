@@ -15,6 +15,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Verify release tag matches README Stable tag
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: |
+          STABLE_TAG="$(grep -iE '^Stable tag:' README.txt | head -1 | sed -E 's/^[Ss]table tag:[[:space:]]*//' | tr -d '[:space:]')"
+          echo "Release tag:        $TAG_NAME"
+          echo "README Stable tag:  $STABLE_TAG"
+          # The 10up action commits to SVN /tags/<TAG_NAME>; wp.org only serves
+          # the update if that matches the readme Stable tag. Fail fast on drift
+          # (e.g. a 'v' prefix) instead of publishing a release wp.org ignores.
+          if [ "$TAG_NAME" != "$STABLE_TAG" ]; then
+            echo "::error::Release tag '$TAG_NAME' does not match README Stable tag '$STABLE_TAG'. Aborting deploy."
+            exit 1
+          fi
+
       - name: WordPress Plugin Deploy
         id: deploy
         uses: 10up/action-wordpress-plugin-deploy@54bd289b8525fd23a5c365ec369185f2966529c2 # v2.3.0
