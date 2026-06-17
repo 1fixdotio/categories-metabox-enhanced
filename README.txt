@@ -1,10 +1,10 @@
 === Categories Metabox Enhanced ===
 
-Contributors: 1fixdotio
+Contributors: 1fixdotio, yoren
 Donate link: http://1fix.io/
 Tags: category, metabox, taxonomy
 Requires at least: 5.5
-Tested up to: 6.7
+Tested up to: 7.0
 Stable tag: 0.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
