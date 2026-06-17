@@ -4,6 +4,7 @@
 # committed block-editor build/ + src/ (src kept for the human-readable-code guideline).
 
 # Dev tooling & CI
+/.git
 /.github
 /bin
 /tests
