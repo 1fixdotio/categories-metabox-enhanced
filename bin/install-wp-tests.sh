@@ -35,14 +35,15 @@ download() {
 	fi
 }
 
-# WordPress doesn't tag x.y.0 patches separately — they live under tags/x.y.
-# Normalize so both the explicit x.y.z branch and the `latest`-via-API branch
-# agree on the SVN path.
+# WordPress doesn't tag three-part x.y.0 patches separately — they live under
+# tags/x.y. But two-part major releases keep their zero: 7.0 is tagged tags/7.0,
+# not tags/7. Only strip the trailing .0 for x.y.0, so both the explicit x.y.z
+# branch and the `latest`-via-API branch agree on the SVN path.
 release_tag_for() {
 	local v="$1"
 	case "$v" in
-		*.0) echo "tags/${v%.0}" ;;
-		*)   echo "tags/$v" ;;
+		*.*.0) echo "tags/${v%.0}" ;;
+		*)     echo "tags/$v" ;;
 	esac
 }
 
