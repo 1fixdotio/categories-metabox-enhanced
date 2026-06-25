@@ -69,7 +69,7 @@ class Category_Metabox_Enhanced {
 	public function __construct() {
 
 		$this->plugin_name = 'category-metabox-enhanced';
-		$this->version     = '0.9.1';
+		$this->version     = '0.9.2';
 
 		$this->load_dependencies();
 		$this->set_locale();

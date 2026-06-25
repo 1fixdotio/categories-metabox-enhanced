@@ -5,7 +5,7 @@ Donate link: http://1fix.io/
 Tags: category, metabox, taxonomy
 Requires at least: 5.5
 Tested up to: 7.0
-Stable tag: 0.9.1
+Stable tag: 0.9.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,9 @@ Set the `default_<taxonomy>` option (e.g. the built-in "Default Post Category" u
 3. A settings page for this plugin
 
 == Changelog ==
+
+= 0.9.2 =
+* Fix PHP 8.2+ "Creation of dynamic property is deprecated" notices by declaring the previously undeclared properties on `Taxonomy_Single_Term` (`$namefield`), `Taxonomy_Single_Term_Walker` (`$hierarchical`, `$input_element`), and `Category_Metabox_Enhanced_Admin` (`$plugin_screen_hook_suffix`). No behavior change.
 
 = 0.9.1 =
 * Fix server-side single-term enforcement, which was registered against `pre_set_object_terms` — a hook that does not exist in WordPress core — and never executed in 0.9.0. The handler now hooks `set_object_terms` and re-issues `wp_set_object_terms` with a corrected list when the single-term contract is violated, so REST and programmatic callers are now actually enforced. The classic-editor metabox path was unaffected; it relies on UI-level enforcement.
