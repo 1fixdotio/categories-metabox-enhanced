@@ -127,6 +127,13 @@ class Taxonomy_Single_Term {
 	protected $default = array();
 
 	/**
+	 * The form field name attribute for the taxonomy input element
+	 * @since 0.1.0
+	 * @var string
+	 */
+	protected $namefield = '';
+
+	/**
 	 * Initiates our metabox action
 	 * @since 0.1.0
 	 * @param string $tax_slug      Taxonomy slug

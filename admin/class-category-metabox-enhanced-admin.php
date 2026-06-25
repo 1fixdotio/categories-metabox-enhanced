@@ -41,6 +41,15 @@ class Category_Metabox_Enhanced_Admin {
 	private $version;
 
 	/**
+	 * The hook suffix of the plugin's settings page.
+	 *
+	 * @since    0.4.0
+	 * @access   private
+	 * @var      string $plugin_screen_hook_suffix The settings page hook suffix.
+	 */
+	private $plugin_screen_hook_suffix;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    0.1.0

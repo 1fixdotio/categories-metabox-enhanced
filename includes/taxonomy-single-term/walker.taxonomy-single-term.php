@@ -14,6 +14,20 @@ class Taxonomy_Single_Term_Walker extends Walker {
 	public $tree_type = 'category';
 	public $db_fields = array( 'parent' => 'parent', 'id' => 'term_id' ); //TODO: decouple this
 
+	/**
+	 * Whether the taxonomy is hierarchical.
+	 * @since 0.1.2
+	 * @var bool
+	 */
+	public $hierarchical;
+
+	/**
+	 * The input element to render (radio or select).
+	 * @since 0.1.2
+	 * @var string
+	 */
+	public $input_element;
+
 	public function __construct( $hierarchical, $input_element ) {
 		$this->hierarchical = $hierarchical;
 		$this->input_element = $input_element;
